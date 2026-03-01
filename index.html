@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Partneralimentatie Calculator Nederland (2026)</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      background: #f0f4f8;
+      color: #2d3748;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #1e4d8c;
+      color: white;
+      padding: 24px 32px;
+    }
+    header h1 { font-size: 1.6rem; font-weight: 700; }
+    header p  { font-size: 0.85rem; opacity: 0.8; margin-top: 4px; }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+
+    /* ── Cards ── */
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .card-header {
+      background: #2563b0;
+      color: white;
+      padding: 12px 20px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-body { padding: 20px; }
+
+    /* ── Grid for two partners ── */
+    .partners-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 700px) { .partners-grid { grid-template-columns: 1fr; } }
+
+    /* ── Form fields ── */
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 0.82rem; font-weight: 600; color: #4a5568; margin-bottom: 4px; }
+    .field input, .field select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #cbd5e0;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      transition: border-color .2s;
+    }
+    .field input:focus, .field select:focus { outline: none; border-color: #2563b0; }
+    .field .hint { font-size: 0.76rem; color: #718096; margin-top: 3px; }
+
+    /* euro prefix */
+    .euro-wrap { position: relative; }
+    .euro-wrap span {
+      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+      color: #718096; font-size: 0.9rem; pointer-events: none;
+    }
+    .euro-wrap input { padding-left: 22px; }
+
+    /* ── Children section ── */
+    .children-row { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; }
+    .children-row input { flex: 1; }
+    .btn-icon {
+      background: none; border: 1px solid #cbd5e0; border-radius: 6px;
+      padding: 6px 10px; cursor: pointer; font-size: 1rem; color: #718096;
+      transition: all .2s;
+    }
+    .btn-icon:hover { border-color: #2563b0; color: #2563b0; }
+
+    /* ── Buttons ── */
+    .btn-primary {
+      background: #2563b0; color: white; border: none;
+      padding: 12px 32px; border-radius: 8px; font-size: 1rem;
+      font-weight: 600; cursor: pointer; transition: background .2s;
+      display: block; margin: 0 auto;
+    }
+    .btn-primary:hover { background: #1e4d8c; }
+
+    /* ── Results ── */
+    #results { display: none; }
+
+    .result-section-title {
+      font-size: 1.1rem; font-weight: 700; color: #1e4d8c;
+      margin-bottom: 12px; padding-bottom: 6px; border-bottom: 2px solid #bee3f8;
+    }
+
+    .calc-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    .calc-table tr:nth-child(even) { background: #f7fafc; }
+    .calc-table td { padding: 6px 10px; }
+    .calc-table td:last-child { text-align: right; font-family: monospace; }
+    .calc-table .section-header td {
+      background: #dbeafe; font-weight: 700; color: #1e3a5f; padding: 8px 10px;
+    }
+    .calc-table .subtotal td { font-weight: 600; border-top: 1px solid #bee3f8; }
+    .calc-table .total-row td {
+      font-weight: 700; background: #ebf8ff; border-top: 2px solid #90cdf4;
+      font-size: 0.95rem;
+    }
+
+    /* comparison table */
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .compare-table th {
+      background: #2563b0; color: white; padding: 10px 14px;
+      text-align: left; font-weight: 600;
+    }
+    .compare-table th:not(:first-child) { text-align: right; }
+    .compare-table td { padding: 9px 14px; border-bottom: 1px solid #e2e8f0; }
+    .compare-table td:not(:first-child) { text-align: right; font-family: monospace; }
+    .compare-table tr:hover { background: #f7fafc; }
+    .compare-table .highlight td {
+      background: #1e4d8c; color: white; font-weight: 700;
+    }
+    .compare-table .highlight td { border-color: #1e4d8c; }
+
+    /* summary box */
+    .summary-box {
+      background: linear-gradient(135deg, #1e4d8c, #2563b0);
+      color: white; border-radius: 10px; padding: 24px;
+      text-align: center; margin-bottom: 20px;
+    }
+    .summary-box .amount {
+      font-size: 3rem; font-weight: 800; line-height: 1;
+    }
+    .summary-box .label { font-size: 0.9rem; opacity: 0.85; margin-top: 4px; }
+    .summary-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px;
+    }
+    @media (max-width: 600px) { .summary-grid { grid-template-columns: 1fr; } }
+    .summary-item {
+      background: rgba(255,255,255,.15); border-radius: 8px; padding: 14px;
+    }
+    .summary-item .val { font-size: 1.4rem; font-weight: 700; }
+    .summary-item .lbl { font-size: 0.78rem; opacity: 0.85; margin-top: 3px; }
+
+    /* duration */
+    .duration-box {
+      background: #f0fff4; border: 1px solid #9ae6b4; border-radius: 8px;
+      padding: 16px 20px;
+    }
+    .duration-box h4 { color: #276749; font-size: 0.95rem; margin-bottom: 8px; }
+    .duration-rule {
+      display: flex; justify-content: space-between; padding: 6px 0;
+      border-bottom: 1px solid #c6f6d5; font-size: 0.85rem;
+    }
+    .duration-rule:last-child { border-bottom: none; font-weight: 700; }
+    .duration-rule .applies { color: #276749; }
+    .duration-rule .na { color: #a0aec0; }
+
+    /* disclaimer */
+    .disclaimer {
+      background: #fffbeb; border: 1px solid #f6e05e; border-radius: 8px;
+      padding: 12px 16px; font-size: 0.82rem; color: #744210; margin-top: 20px;
+    }
+
+    /* badge */
+    .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 12px;
+      font-size: 0.75rem; font-weight: 600;
+    }
+    .badge-blue  { background: #bee3f8; color: #1e3a5f; }
+    .badge-green { background: #c6f6d5; color: #1a4731; }
+
+    .neg { color: #c53030; }
+    .pos { color: #276749; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Partneralimentatie Calculator</h1>
+  <p>Gebaseerd op Trema-richtlijnen &bull; Tarieven 1e helft 2026 &bull; Berekening is indicatief</p>
+</header>
+
+<div class="container">
+
+  <!-- ───────────────────── INPUT ───────────────────── -->
+  <form id="calcForm">
+
+    <!-- Partners -->
+    <div class="partners-grid">
+
+      <!-- Partner A -->
+      <div class="card">
+        <div class="card-header">&#128100; Partner A</div>
+        <div class="card-body">
+          <div class="field">
+            <label>Naam (optioneel)</label>
+            <input type="text" id="a_name" placeholder="Partner A" autocomplete="off">
+          </div>
+          <div class="field">
+            <label>Bruto maandsalaris (excl. vakantiegeld)</label>
+            <div class="euro-wrap"><span>&euro;</span>
+              <input type="number" id="a_salary" min="0" step="1" placeholder="0" required>
+            </div>
+          </div>
+          <div class="field">
+            <label>Pensioenpremie per maand</label>
+            <div class="euro-wrap"><span>&euro;</span>
+              <input type="number" id="a_pension" min="0" step="1" placeholder="0">
+            </div>
+          </div>
+          <div class="field">
+            <label>Aanv. pensioenpremie / WIA per maand</label>
+            <div class="euro-wrap"><span>&euro;</span>
+              <input type="number" id="a_wia" min="0" step="1" placeholder="0">
+            </div>
+          </div>
+          <div class="field">
+            <label>WGA/WHK werknemerspremie per maand</label>
+            <div class="euro-wrap"><span>&euro;</span>
+              <input type="number" id="a_wga" min="0" step="1" placeholder="0">
+            </div>
+          </div>
+          <div class="field">
+            <label>Woonsituatie na scheiding</label>
+            <select id="a_woon">
+              <option value="0.60">Alleenwonend (60%)</option>
+              <option value="0.45">Samenwonend / nieuwe partner (45%)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Geboortedatum</label>
+            <input type="date" id="a_dob">
+          </div>
+        </div>
+      </div>
+
+      <!-- Partner B -->
+      <div class="card">
+        <div class="card-header">&#128100; Partner B</div>
+        <div class="card-body">
+          <div class="field">
+            <label>Naam (optioneel)</label>
+            <input type="text" id="b_name" placeholder="Partner B" autocomplete="off">
+          </div>
+          <div class="field">
+            <label>Bruto maandsalaris (excl. vakantiegeld)</label>
+            <div class="euro-wrap"><span>&euro;</span>
+              <input type="number" id="b_salary" min="0" step="1" placeholder="0" required>
+            </div>
+          </div>
+          <div class="field">
+            <label>Pensioenpremie per maand</label>
+            <div class="euro-wrap"><span>&euro;</span>
+              <input type="number" id="b_pension" min="0" step="1" placeholder="0">
+            </div>
+          </div>
+          <div class="field">
+            <label>Aanv. pensioenpremie / WIA per maand</label>
+            <div class="euro-wrap"><span>&euro;</span>
+              <input type="number" id="b_wia" min="0" step="1" placeholder="0">
+            </div>
+          </div>
+          <div class="field">
+            <label>WGA/WHK werknemerspremie per maand</label>
+            <div class="euro-wrap"><span>&euro;</span>
+              <input type="number" id="b_wga" min="0" step="1" placeholder="0">
+            </div>
+          </div>
+          <div class="field">
+            <label>Woonsituatie na scheiding</label>
+            <select id="b_woon">
+              <option value="0.60">Alleenwonend (60%)</option>
+              <option value="0.45">Samenwonend / nieuwe partner (45%)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Geboortedatum</label>
+            <input type="date" id="b_dob">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Marriage & dates -->
+    <div class="card">
+      <div class="card-header">&#128197; Huwelijks- en echtscheidingsgegevens</div>
+      <div class="card-body">
+        <div class="partners-grid">
+          <div>
+            <div class="field">
+              <label>Huwelijksdatum</label>
+              <input type="date" id="marriageDate" required>
+            </div>
+            <div class="field">
+              <label>Datum indiening verzoek echtscheiding</label>
+              <input type="date" id="filingDate" required>
+            </div>
+            <div class="field">
+              <label>Datum inschrijving echtscheidingsbeschikking</label>
+              <input type="date" id="registrationDate" required>
+            </div>
+          </div>
+          <div>
+            <div class="field">
+              <label>Geboortedatum jongste kind jonger dan 12 jaar (indien van toepassing)</label>
+              <input type="date" id="youngestChildDob">
+              <div class="hint">Laat leeg als geen kinderen jonger dan 12 jaar</div>
+            </div>
+            <div class="field">
+              <label>Wie ontvangt alimentatie?</label>
+              <select id="receiverChoice">
+                <option value="auto">Automatisch bepalen (laagste inkomen)</option>
+                <option value="a">Partner A ontvangt</option>
+                <option value="b">Partner B ontvangt</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn-primary">&#9654; Bereken partneralimentatie</button>
+  </form>
+
+  <!-- ───────────────────── RESULTS ───────────────────── -->
+  <div id="results">
+    <div style="height:24px"></div>
+
+    <!-- Summary -->
+    <div class="summary-box" id="summaryBox"></div>
+
+    <!-- Draagkracht per person -->
+    <div class="card">
+      <div class="card-header">&#128202; Draagkrachtberekening</div>
+      <div class="card-body">
+        <div class="partners-grid">
+          <div>
+            <div class="result-section-title" id="titleA"></div>
+            <table class="calc-table" id="tableA"></table>
+          </div>
+          <div>
+            <div class="result-section-title" id="titleB"></div>
+            <table class="calc-table" id="tableB"></table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alimentatievergelijking -->
+    <div class="card">
+      <div class="card-header">&#9878;&#65039; Alimentatievergelijking</div>
+      <div class="card-body">
+        <table class="compare-table" id="compareTable"></table>
+      </div>
+    </div>
+
+    <!-- Duration -->
+    <div class="card">
+      <div class="card-header">&#128336; Duur partneralimentatie</div>
+      <div class="card-body" id="durationBox"></div>
+    </div>
+
+    <!-- Net income comparison -->
+    <div class="card">
+      <div class="card-header">&#128178; Besteedbaar inkomen na scheiding</div>
+      <div class="card-body" id="netIncomeBox"></div>
+    </div>
+
+    <div class="disclaimer">
+      <strong>Let op:</strong> Deze calculator geeft een indicatieve berekening op basis van Trema-richtlijnen (tarieven 1e helft 2026).
+      De uitkomst kan afwijken van een officiële berekening door een mediator of rechter.
+      Raadpleeg altijd een familierechtsadvocaat of mediator voor een definitieve vaststelling.
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  CONSTANTS  (2026, 1e helft, based on Trema data)
+// ═══════════════════════════════════════════════════════
+const C = {
+  // Box 1 belastingschijven
+  S1_MAX:  38883,  S1_RATE: 0.3575,
+  S2_MAX:  78426,  S2_RATE: 0.3756,
+                   S3_RATE: 0.4950,
+
+  // Heffingskortingen
+  AHK_MAX:   3115,   // Algemene heffingskorting maximum
+  AHK_START: 29700,  // Phase-out start (estimated, verified from PDF data)
+  AHK_RATE:  0.0639, // Phase-out rate (verified: matches €1,636 @ €52,846 and €738 @ €66,895)
+
+  AK_MAX:   5213,   // Arbeidskorting maximum
+  AK_START: 52846,  // Phase-out start (verified from PDF)
+  AK_RATE:  0.0651, // Phase-out rate (verified: matches €3,519 @ €78,865)
+
+  // Draagkracht
+  FORFAIT:   1365,  // Forfait noodzakelijke lasten per maand (2026)
+  WOON_PCT:  0.30,  // Woonbudget = 30% van besteedbaar per maand
+
+  // Misc
+  VAKANTIE:  0.08,   // Vakantietoeslag percentage
+  ZVW_RATE:  0.0485, // ZVW-bijdrage op partneralimentatie (afgeleid uit PDF)
+  AOW_AGE:   67,     // AOW-leeftijd (jaren)
+};
+
+// ═══════════════════════════════════════════════════════
+//  TAX FUNCTIONS
+// ═══════════════════════════════════════════════════════
+
+function box1Belasting(inkomen) {
+  if (inkomen <= 0) return 0;
+  let b = 0;
+  b += Math.min(inkomen, C.S1_MAX) * C.S1_RATE;
+  if (inkomen > C.S1_MAX) b += Math.min(inkomen - C.S1_MAX, C.S2_MAX - C.S1_MAX) * C.S2_RATE;
+  if (inkomen > C.S2_MAX) b += (inkomen - C.S2_MAX) * C.S3_RATE;
+  return b;
+}
+
+// IMPORTANT: arbeidskorting is based on LABOR income (inkomen uit arbeid),
+// NOT on the taxable income after alimony deductions.
+function arbeidskorting(inkomenUitArbeid) {
+  if (inkomenUitArbeid <= 0) return 0;
+  if (inkomenUitArbeid <= C.AK_START) return C.AK_MAX; // simplified build-up → cap at max
+  return Math.max(0, C.AK_MAX - (inkomenUitArbeid - C.AK_START) * C.AK_RATE);
+}
+
+// Algemene heffingskorting based on verzamelinkomen (taxable income, including alimony effects)
+function algHeffingskorting(verzamelinkomen) {
+  if (verzamelinkomen <= 0) return C.AHK_MAX;
+  if (verzamelinkomen <= C.AHK_START) return C.AHK_MAX;
+  return Math.max(0, C.AHK_MAX - (verzamelinkomen - C.AHK_START) * C.AHK_RATE);
+}
+
+function marginaalTarief(belastbaarInkomen) {
+  if (belastbaarInkomen <= C.S1_MAX) return C.S1_RATE;
+  if (belastbaarInkomen <= C.S2_MAX) return C.S2_RATE;
+  return C.S3_RATE;
+}
+
+// ═══════════════════════════════════════════════════════
+//  CORE INCOME CALCULATION
+//  Returns all intermediate values for a person.
+//  alimonyPaid and alimonyReceived are ANNUAL gross amounts.
+// ═══════════════════════════════════════════════════════
+function berekenInkomen(p, alimonyPaid = 0, alimonyReceived = 0) {
+  const salaryAnnual   = p.salary  * 12;
+  const vakantie       = salaryAnnual * C.VAKANTIE;
+  const brutoInkomsten = salaryAnnual + vakantie;
+
+  const pensionAnnual  = p.pension * 12;
+  const wiaAnnual      = p.wia     * 12;
+  const wgaAnnual      = p.wga     * 12;
+
+  // Inkomen uit arbeid (labor income) = bruto inkomsten (incl. vakantiegeld) minus premies
+  // This matches the PDF: €84,278 - €5,209 - €204 = €78,865 (line 59/64)
+  const inkomenUitArbeid = brutoInkomsten - pensionAnnual - wiaAnnual;
+
+  // Belastbaar inkomen = inkomen uit arbeid - paid alimony + received alimony
+  const belastbaarInkomen = inkomenUitArbeid - alimonyPaid + alimonyReceived;
+
+  // Tariefsaanpassing: when payer was partly in schijf 3 before alimony deduction.
+  // The deduction is limited to schijf 2 rate, causing a small upward correction.
+  let tariefsaanpassing = 0;
+  if (alimonyPaid > 0) {
+    const inSchijf3 = Math.max(0, inkomenUitArbeid - C.S2_MAX);
+    const fromSchijf3 = Math.min(inSchijf3, alimonyPaid);
+    tariefsaanpassing = fromSchijf3 * (C.S3_RATE - C.S2_RATE);
+  }
+
+  const rawBelasting = box1Belasting(Math.max(0, belastbaarInkomen));
+  const ak = arbeidskorting(inkomenUitArbeid);        // labor income!
+  const ahk = algHeffingskorting(Math.max(0, belastbaarInkomen)); // taxable income
+
+  const verschuldigde = Math.max(0, rawBelasting - ak - ahk) + tariefsaanpassing;
+
+  // ZVW only applies to received alimony (not to employment income, which is employer-borne)
+  const zvw = alimonyReceived > 0 ? alimonyReceived * C.ZVW_RATE : 0;
+
+  // Besteedbaar inkomen (annual)
+  const besteedbaar = inkomenUitArbeid + alimonyReceived - verschuldigde - wgaAnnual - zvw;
+  const besteedbaarPM = besteedbaar / 12;
+
+  return {
+    salaryAnnual, vakantie, brutoInkomsten,
+    pensionAnnual, wiaAnnual, wgaAnnual,
+    inkomenUitArbeid,
+    belastbaarInkomen,
+    rawBelasting, ak, ahk, tariefsaanpassing, verschuldigde,
+    zvw, besteedbaar, besteedbaarPM,
+  };
+}
+
+// ═══════════════════════════════════════════════════════
+//  DRAAGKRACHT  (capacity calculation, without alimony)
+// ═══════════════════════════════════════════════════════
+function berekenDraagkracht(p) {
+  const inc = berekenInkomen(p, 0, 0);
+  const { besteedbaarPM } = inc;
+
+  const woonbudget      = C.WOON_PCT * besteedbaarPM;
+  const draagkrachtloos = C.FORFAIT + woonbudget;
+  const draagkrachtruimte = Math.max(0, besteedbaarPM - draagkrachtloos);
+  const pct = p.woon; // 0.60 or 0.45
+  const beschikbaar     = draagkrachtruimte * pct;
+
+  return { ...inc, woonbudget, draagkrachtloos, draagkrachtruimte, pct, beschikbaar };
+}
+
+// ═══════════════════════════════════════════════════════
+//  BRUTERING  (Buijs method) – gross-up alimony for payer
+//  net = what payer effectively pays after tax benefit
+//  gross = what receiver legally receives (tax-deductible for payer)
+// ═══════════════════════════════════════════════════════
+function brutering(netPerMonth, payerLaborIncome) {
+  let grossPM = netPerMonth;
+  for (let i = 0; i < 30; i++) {
+    const taxableAfter = payerLaborIncome - grossPM * 12;
+    const rate = marginaalTarief(Math.max(0, taxableAfter));
+    const newGross = netPerMonth / (1 - rate);
+    if (Math.abs(newGross - grossPM) < 0.001) { grossPM = newGross; break; }
+    grossPM = newGross;
+  }
+  return grossPM;
+}
+
+// ═══════════════════════════════════════════════════════
+//  BEHOEFTE  (recipient's need – 60% Trema method)
+// ═══════════════════════════════════════════════════════
+function berekenBehoefte(payerIncResult, receiverIncResult, receiverP) {
+  const combined     = payerIncResult.besteedbaarPM + receiverIncResult.besteedbaarPM;
+  const behoefteNet  = Math.max(0, 0.60 * combined - receiverIncResult.besteedbaarPM);
+
+  // Start from schijf 3 assumption (higher solution, as Trema does)
+  let behoefteGross = behoefteNet / (1 - C.S3_RATE);
+  for (let i = 0; i < 30; i++) {
+    const projectedIncome = receiverP.salary * 12 - receiverP.pension * 12 - receiverP.wia * 12
+                           + behoefteGross * 12;
+    const rate = marginaalTarief(Math.max(0, projectedIncome));
+    const newGross = behoefteNet / (1 - rate);
+    if (Math.abs(newGross - behoefteGross) < 0.001) { behoefteGross = newGross; break; }
+    behoefteGross = newGross;
+  }
+
+  return { behoefteNet, behoefteGross, combined };
+}
+
+// ═══════════════════════════════════════════════════════
+//  INKOMENSVERGELIJKING / JUS  (binary search)
+//  Find gross annual alimony X that equalizes after-alimony
+//  disposable incomes of both partners.
+// ═══════════════════════════════════════════════════════
+function berekenJUS(payerP, receiverP) {
+  function netsAt(xAnnual) {
+    const payerCalc    = berekenInkomen(payerP,    xAnnual, 0);
+    const receiverCalc = berekenInkomen(receiverP, 0, xAnnual);
+    // payer's spending money = disposable MINUS the gross alimony paid
+    const payerResteert    = payerCalc.besteedbaarPM    - xAnnual / 12;
+    const receiverResteert = receiverCalc.besteedbaarPM;
+    return { payerResteert, receiverResteert };
+  }
+
+  // Check if any alimony is needed
+  const { payerResteert: p0, receiverResteert: r0 } = netsAt(0);
+  if (p0 <= r0) return 0; // Already equal or receiver earns more
+
+  let lo = 0, hi = 200000;
+  for (let i = 0; i < 100; i++) {
+    const mid = (lo + hi) / 2;
+    const { payerResteert, receiverResteert } = netsAt(mid);
+    if (payerResteert > receiverResteert) lo = mid;
+    else hi = mid;
+  }
+  return (lo + hi) / 2 / 12; // Return monthly gross
+}
+
+// ═══════════════════════════════════════════════════════
+//  DURATION  (Art. 157 BW)
+// ═══════════════════════════════════════════════════════
+function berekenDuur(marriageDate, filingDate, registrationDate, youngestChildDob, receiverDob) {
+  // Calculate marriage duration to registration date
+  function diffDays(d1, d2) {
+    return Math.round((d2 - d1) / 86400000);
+  }
+  function diffYearsDays(d1, d2) {
+    let years = d2.getFullYear() - d1.getFullYear();
+    let month = d2.getMonth() - d1.getMonth();
+    let day   = d2.getDate()  - d1.getDate();
+    if (day < 0)   { month--; }
+    if (month < 0) { years--; month += 12; }
+    // Days remainder
+    const lastAnniv = new Date(d1);
+    lastAnniv.setFullYear(lastAnniv.getFullYear() + years);
+    const days = diffDays(lastAnniv, d2);
+    return { years, days };
+  }
+
+  const marriageDuration = diffYearsDays(marriageDate, registrationDate);
+
+  // Rule 1: work in total days to preserve days precision (months-based rounding loses days)
+  const marriageTotalDays = diffDays(marriageDate, registrationDate);
+  const halfTotalDays = Math.floor(marriageTotalDays / 2);
+
+  const rule1EndDate = new Date(registrationDate);
+  rule1EndDate.setDate(rule1EndDate.getDate() + halfTotalDays);
+
+  // Cap at exactly 5 years from registration date
+  const fiveYearsEnd = new Date(registrationDate);
+  fiveYearsEnd.setFullYear(fiveYearsEnd.getFullYear() + 5);
+  const cappedEndDate = rule1EndDate <= fiveYearsEnd ? rule1EndDate : fiveYearsEnd;
+
+  const rule1Duration = diffYearsDays(registrationDate, cappedEndDate);
+
+  // Rule 2 & 3: marriage > 15 years
+  const marriageYrs = marriageTotalDays / 365.25;
+  let rule2Duration = { years: 0, days: 0 };
+  let rule3Duration = { years: 0, days: 0 };
+
+  if (receiverDob && marriageYrs > 15) {
+    const receiverAgeAtFiling = diffYearsDays(receiverDob, filingDate).years;
+    const yearsToAow = C.AOW_AGE - receiverAgeAtFiling;
+
+    // Rule 2: if receiver within 10 years of AOW
+    if (yearsToAow <= 10) {
+      const aowDate = new Date(receiverDob);
+      aowDate.setFullYear(aowDate.getFullYear() + C.AOW_AGE);
+      rule2Duration = diffYearsDays(registrationDate, aowDate);
+    }
+    // Rule 3: born on or before 01-01-1970 AND more than 10 years from AOW
+    if (receiverDob <= new Date('1970-01-01') && yearsToAow > 10) {
+      rule3Duration = { years: 10, days: 0 };
+    }
+  }
+
+  // Rule 4: youngest child under 12
+  let rule4Duration = { years: 0, days: 0 };
+  if (youngestChildDob) {
+    const child12Date = new Date(youngestChildDob);
+    child12Date.setFullYear(child12Date.getFullYear() + 12);
+    if (child12Date > registrationDate) {
+      rule4Duration = diffYearsDays(registrationDate, child12Date);
+    }
+  }
+
+  // Rule 5: longest applies
+  function toMonths(d) { return d.years * 12 + d.days / 30.44; }
+  const candidates = [rule1Duration, rule2Duration, rule3Duration, rule4Duration];
+  const applied = candidates.reduce((a, b) => toMonths(a) >= toMonths(b) ? a : b);
+
+  // End date
+  const endDate = new Date(registrationDate);
+  endDate.setFullYear(endDate.getFullYear() + applied.years);
+  endDate.setDate(endDate.getDate() + applied.days);
+
+  // Extension request deadline: 3 months before end
+  const extensionDeadline = new Date(endDate);
+  extensionDeadline.setMonth(extensionDeadline.getMonth() - 3);
+
+  return {
+    marriageDuration, marriageYrs,
+    rule1Duration, rule2Duration, rule3Duration, rule4Duration,
+    applied, endDate, extensionDeadline,
+  };
+}
+
+// ═══════════════════════════════════════════════════════
+//  FORMATTING HELPERS
+// ═══════════════════════════════════════════════════════
+function eur(n, decimals = 0) {
+  if (n === null || n === undefined || isNaN(n)) return '–';
+  const v = Math.abs(n).toFixed(decimals);
+  const formatted = Number(v).toLocaleString('nl-NL');
+  return (n < 0 ? '- ' : '') + '€\u202F' + formatted;
+}
+function pct(n) { return (n * 100).toFixed(2) + '%'; }
+function fmtDate(d) {
+  return d.toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+function fmtDuration(d) {
+  if (!d || (d.years === 0 && d.days === 0)) return '0 jaar';
+  const parts = [];
+  if (d.years > 0) parts.push(d.years + ' jaar');
+  if (d.days > 0)  parts.push(d.days + ' dagen');
+  return parts.join(' en ');
+}
+
+function row(label, value, cls = '') {
+  return `<tr class="${cls}"><td>${label}</td><td>${value}</td></tr>`;
+}
+function sectionHdr(title) {
+  return `<tr class="section-header"><td colspan="2">${title}</td></tr>`;
+}
+
+// ═══════════════════════════════════════════════════════
+//  BUILD DRAAGKRACHT TABLE HTML
+// ═══════════════════════════════════════════════════════
+function buildDraagkrachtTable(d, name) {
+  const rows = [];
+  rows.push(sectionHdr('Bruto inkomen'));
+  rows.push(row('41 – Bruto arbeidsinkomen (jaar)', eur(d.salaryAnnual)));
+  rows.push(row('44 – Vakantietoeslag (8%)', eur(d.vakantie)));
+  rows.push(row('Bruto inkomsten', eur(d.brutoInkomsten), 'subtotal'));
+  rows.push(sectionHdr('Premies'));
+  rows.push(row('51 – Pensioenpremie (jaar)', `- ${eur(d.pensionAnnual)}`));
+  if (d.wiaAnnual > 0) rows.push(row('53 – Aanv. pensioenpremie / WIA (jaar)', `- ${eur(d.wiaAnnual)}`));
+  rows.push(sectionHdr('Belasting'));
+  rows.push(row('64 – Belastbaar loon', eur(d.belastbaarInkomen)));
+  rows.push(row('95 – Inkomensheffing Box 1 (bruto)', eur(d.rawBelasting)));
+  rows.push(sectionHdr('Heffingskortingen'));
+  rows.push(row('Arbeidskorting', `- ${eur(d.ak)}`));
+  rows.push(row('Algemene heffingskorting', `- ${eur(d.ahk)}`));
+  rows.push(row('117 – Verschuldigde inkomensheffing', eur(d.verschuldigde), 'subtotal'));
+  rows.push(sectionHdr('Besteedbaar inkomen'));
+  rows.push(row('120 – Besteedbaar inkomen (jaar)', eur(d.besteedbaar)));
+  if (d.wgaAnnual > 0) rows.push(row('56a – WGA/WHK-premie (jaar)', `- ${eur(d.wgaAnnual)}`));
+  rows.push(row('121 – Besteedbaar inkomen per maand', eur(d.besteedbaarPM), 'total-row'));
+  rows.push(sectionHdr('Draagkrachtloos inkomen'));
+  rows.push(row('122 – Forfait noodzakelijke lasten', eur(C.FORFAIT)));
+  rows.push(row(`123 – Woonbudget (${pct(C.WOON_PCT)} × ${eur(d.besteedbaarPM)})`, eur(d.woonbudget)));
+  rows.push(row('Draagkrachtloos inkomen', eur(d.draagkrachtloos), 'subtotal'));
+  rows.push(sectionHdr('Draagkrachtruimte & beschikbaar'));
+  rows.push(row('136 – Draagkrachtruimte', eur(d.draagkrachtruimte)));
+  rows.push(row(`Percentage (${pct(d.pct)})`, ''));
+  rows.push(row('137 – Beschikbaar voor partneralimentatie (netto)', eur(d.beschikbaar), 'total-row'));
+  return `<table class="calc-table">${rows.join('')}</table>`;
+}
+
+// ═══════════════════════════════════════════════════════
+//  MAIN CALCULATE & DISPLAY
+// ═══════════════════════════════════════════════════════
+document.getElementById('calcForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  function val(id, def = 0) {
+    const v = parseFloat(document.getElementById(id).value);
+    return isNaN(v) ? def : v;
+  }
+  function dateVal(id) {
+    const v = document.getElementById(id).value;
+    return v ? new Date(v) : null;
+  }
+
+  const nameA = document.getElementById('a_name').value || 'Partner A';
+  const nameB = document.getElementById('b_name').value || 'Partner B';
+
+  const A = {
+    name:    nameA,
+    salary:  val('a_salary'),
+    pension: val('a_pension'),
+    wia:     val('a_wia'),
+    wga:     val('a_wga'),
+    woon:    parseFloat(document.getElementById('a_woon').value),
+    dob:     dateVal('a_dob'),
+  };
+  const B = {
+    name:    nameB,
+    salary:  val('b_salary'),
+    pension: val('b_pension'),
+    wia:     val('b_wia'),
+    wga:     val('b_wga'),
+    woon:    parseFloat(document.getElementById('b_woon').value),
+    dob:     dateVal('b_dob'),
+  };
+
+  const marriageDate      = dateVal('marriageDate');
+  const filingDate        = dateVal('filingDate');
+  const registrationDate  = dateVal('registrationDate');
+  const youngestChildDob  = dateVal('youngestChildDob');
+  const receiverChoice    = document.getElementById('receiverChoice').value;
+
+  if (!marriageDate || !filingDate || !registrationDate) {
+    alert('Vul alle datumvelden in.');
+    return;
+  }
+
+  // ── Draagkracht (without alimony) ──
+  const dkA = berekenDraagkracht(A);
+  const dkB = berekenDraagkracht(B);
+
+  // ── Determine payer / receiver ──
+  let payer, receiver, dkPayer, dkReceiver;
+  if (receiverChoice === 'a') {
+    payer = B; receiver = A; dkPayer = dkB; dkReceiver = dkA;
+  } else if (receiverChoice === 'b') {
+    payer = A; receiver = B; dkPayer = dkA; dkReceiver = dkB;
+  } else {
+    // Automatic: higher salary pays
+    if (A.salary >= B.salary) {
+      payer = A; receiver = B; dkPayer = dkA; dkReceiver = dkB;
+    } else {
+      payer = B; receiver = A; dkPayer = dkB; dkReceiver = dkA;
+    }
+  }
+
+  // ── Brutering ──
+  const draagkrachtGrossPM = brutering(dkPayer.beschikbaar, dkPayer.inkomenUitArbeid);
+
+  // ── Behoefte ──
+  const beh = berekenBehoefte(dkPayer, dkReceiver, receiver);
+
+  // ── JUS ──
+  const jus_pm = berekenJUS(payer, receiver);
+
+  // ── Applied ──
+  const applied_pm = Math.max(0, Math.min(draagkrachtGrossPM, beh.behoefteGross, jus_pm));
+  const applied_yr = applied_pm * 12;
+
+  // ── Duration ──
+  const receiverDob = receiver.dob;
+  const dur = berekenDuur(marriageDate, filingDate, registrationDate, youngestChildDob, receiverDob);
+
+  // ═══ DISPLAY ═══
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+
+  // Summary
+  const summaryBox = document.getElementById('summaryBox');
+  if (applied_pm <= 0) {
+    summaryBox.innerHTML = `
+      <div class="amount">&euro; 0</div>
+      <div class="label">Geen partneralimentatie verschuldigd</div>
+      <div class="label" style="margin-top:8px">Beide partners hebben een vergelijkbaar besteedbaar inkomen</div>`;
+  } else {
+    summaryBox.innerHTML = `
+      <div class="label">${payer.name} betaalt aan ${receiver.name}</div>
+      <div class="amount">${eur(applied_pm)} <span style="font-size:1.2rem;font-weight:400">/maand</span></div>
+      <div class="label">${eur(applied_yr)} per jaar</div>
+      <div class="summary-grid">
+        <div class="summary-item">
+          <div class="val">${eur(draagkrachtGrossPM)}</div>
+          <div class="lbl">Draagkracht (${payer.name})</div>
+        </div>
+        <div class="summary-item">
+          <div class="val">${eur(beh.behoefteGross)}</div>
+          <div class="lbl">Behoefte (${receiver.name})</div>
+        </div>
+        <div class="summary-item">
+          <div class="val">${eur(jus_pm)}</div>
+          <div class="lbl">Inkomensvergelijking (JUS)</div>
+        </div>
+      </div>`;
+  }
+
+  // Draagkracht tables
+  document.getElementById('titleA').textContent = A.name;
+  document.getElementById('titleB').textContent = B.name;
+  document.getElementById('tableA').outerHTML = buildDraagkrachtTable(dkA, A.name);
+  document.getElementById('tableB').outerHTML = buildDraagkrachtTable(dkB, B.name);
+  // Fix: re-select after outerHTML replacement
+  document.querySelector('#tableA, table.calc-table:first-of-type');
+  // Simpler: just set innerHTML of wrappers
+  const wrappers = document.querySelectorAll('.card-body .partners-grid > div');
+  wrappers[0].innerHTML = `<div class="result-section-title">${A.name}</div>` + buildDraagkrachtTable(dkA, A.name);
+  wrappers[1].innerHTML = `<div class="result-section-title">${B.name}</div>` + buildDraagkrachtTable(dkB, B.name);
+
+  // Comparison table
+  const wichMin = (a, b, c) => {
+    const min = Math.min(a, b, c);
+    return (v) => Math.abs(v - min) < 0.01;
+  };
+  const isMin = wichMin(draagkrachtGrossPM, beh.behoefteGross, jus_pm);
+
+  document.getElementById('compareTable').innerHTML = `
+    <thead>
+      <tr>
+        <th>Methode</th>
+        <th>Per jaar</th>
+        <th>Per maand</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="${isMin(draagkrachtGrossPM) ? 'highlight' : ''}">
+        <td>Maximaal volgens draagkracht (${payer.name})</td>
+        <td>${eur(draagkrachtGrossPM * 12)}</td>
+        <td>${eur(draagkrachtGrossPM)}</td>
+      </tr>
+      <tr class="${isMin(beh.behoefteGross) ? 'highlight' : ''}">
+        <td>Maximaal volgens behoefte (${receiver.name})</td>
+        <td>${eur(beh.behoefteGross * 12)}</td>
+        <td>${eur(beh.behoefteGross)}</td>
+      </tr>
+      <tr class="${isMin(jus_pm) ? 'highlight' : ''}">
+        <td>Maximaal volgens inkomensvergelijking (JUS)</td>
+        <td>${eur(jus_pm * 12)}</td>
+        <td>${eur(jus_pm)}</td>
+      </tr>
+      <tr style="background:#1e4d8c;color:white;font-weight:700;">
+        <td>&#10004; Toegepast (laagste bedrag)</td>
+        <td>${eur(applied_yr)}</td>
+        <td>${eur(applied_pm)}</td>
+      </tr>
+    </tbody>`;
+
+  // Duration
+  const durBox = document.getElementById('durationBox');
+  const rules = [
+    {
+      nr: 1,
+      text: 'Helft van de huwelijksduur, maximaal 5 jaar',
+      applies: dur.rule1Duration.years > 0 || dur.rule1Duration.days > 0,
+      duration: dur.rule1Duration,
+      detail: `Huwelijksduur: ${fmtDuration(dur.marriageDuration)}`
+    },
+    {
+      nr: 2,
+      text: 'Huwelijk > 15 jaar en ontvanger binnen 10 jaar van AOW',
+      applies: dur.rule2Duration.years > 0 || dur.rule2Duration.days > 0,
+      duration: dur.rule2Duration,
+      detail: dur.marriageYrs <= 15 ? 'Huwelijk korter dan 15 jaar – niet van toepassing' : ''
+    },
+    {
+      nr: 3,
+      text: 'Huwelijk > 15 jaar en ontvanger geboren ≤ 1 jan 1970',
+      applies: dur.rule3Duration.years > 0,
+      duration: dur.rule3Duration,
+      detail: dur.marriageYrs <= 15 ? 'Huwelijk korter dan 15 jaar – niet van toepassing' : ''
+    },
+    {
+      nr: 4,
+      text: 'Kind jonger dan 12 jaar op datum indiening',
+      applies: dur.rule4Duration.years > 0 || dur.rule4Duration.days > 0,
+      duration: dur.rule4Duration,
+      detail: !youngestChildDob ? 'Geen kind jonger dan 12 jaar opgegeven' : ''
+    },
+  ];
+
+  durBox.innerHTML = `
+    <div class="duration-box">
+      <h4>&#128336; Duur partneralimentatie (Art. 157 BW)</h4>
+      ${rules.map(r => `
+        <div class="duration-rule">
+          <span>Lid ${r.nr}: ${r.text}${r.detail ? ' <em style="color:#718096;font-size:.8em">(' + r.detail + ')</em>' : ''}</span>
+          <span class="${r.applies ? 'applies' : 'na'}">${r.applies ? fmtDuration(r.duration) : '– niet van toepassing'}</span>
+        </div>`).join('')}
+      <div class="duration-rule">
+        <span><strong>Lid 5: Langste termijn van toepassing</strong></span>
+        <span class="applies"><strong>${fmtDuration(dur.applied)}</strong></span>
+      </div>
+    </div>
+    <div style="margin-top:16px;font-size:.88rem;color:#4a5568;">
+      <div><strong>Ingangsdatum:</strong> ${fmtDate(registrationDate)}</div>
+      <div><strong>Einddatum alimentatie:</strong> ${fmtDate(dur.endDate)}</div>
+      <div><strong>Verlengingsverzoek indienen uiterlijk:</strong> ${fmtDate(dur.extensionDeadline)}</div>
+    </div>`;
+
+  // Net income after divorce
+  const payerAfter    = berekenInkomen(payer,    applied_yr, 0);
+  const receiverAfter = berekenInkomen(receiver, 0, applied_yr);
+  const payerResteert    = payerAfter.besteedbaarPM - applied_pm;
+  const receiverResteert = receiverAfter.besteedbaarPM;
+
+  // Tax effects on alimony
+  // Payer: alimony is tax-deductible → disposable income rises by the tax benefit
+  const payerTaxBenefit = payerAfter.besteedbaarPM - dkPayer.besteedbaarPM; // e.g. €436/m
+  const payerNetCost    = applied_pm - payerTaxBenefit;                      // e.g. €562/m
+  // Receiver: pays income tax + ZVW on received alimony
+  const receiverNetGain = receiverAfter.besteedbaarPM - dkReceiver.besteedbaarPM; // e.g. €511/m
+  const receiverTaxCost = applied_pm - receiverNetGain;                           // e.g. €487/m
+
+  document.getElementById('netIncomeBox').innerHTML = `
+    <div style="overflow-x:auto">
+    <table class="compare-table">
+      <thead><tr>
+        <th>Partner</th>
+        <th>Besteedbaar voor scheiding</th>
+        <th>Bruto alimentatie</th>
+        <th>Belastingeffect</th>
+        <th>Netto alimentatie</th>
+        <th>Besteedbaar na scheiding</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td>${payer.name} <span class="badge badge-blue">betaalt</span></td>
+          <td>${eur(dkPayer.besteedbaarPM)}</td>
+          <td class="neg">- ${eur(applied_pm)}</td>
+          <td class="pos">+ ${eur(payerTaxBenefit)}<br><span style="font-size:.75rem;color:#9ae6b4">belastingvoordeel</span></td>
+          <td class="neg"><strong>- ${eur(payerNetCost)}</strong></td>
+          <td><strong>${eur(payerResteert)}</strong></td>
+        </tr>
+        <tr>
+          <td>${receiver.name} <span class="badge badge-green">ontvangt</span></td>
+          <td>${eur(dkReceiver.besteedbaarPM)}</td>
+          <td class="pos">+ ${eur(applied_pm)}</td>
+          <td class="neg">- ${eur(receiverTaxCost)}<br><span style="font-size:.75rem;color:#feb2b2">belasting + ZVW</span></td>
+          <td class="pos"><strong>+ ${eur(receiverNetGain)}</strong></td>
+          <td><strong>${eur(receiverResteert)}</strong></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <p style="margin-top:12px;font-size:.8rem;color:#718096">
+      Bruto alimentatie is het wettelijk overeengekomen bedrag. Voor de betaler is dit aftrekbaar van het belastbaar inkomen (belastingvoordeel).
+      De ontvanger betaalt inkomstenbelasting en ZVW-bijdrage over het ontvangen bedrag. Het nettobedrag is het werkelijke effect op het besteedbaar inkomen.
+    </p>`;
+});
+</script>
+</body>
+</html>
