@@ -222,9 +222,17 @@
       background: #f7fafc;
     }
     .advisor-card-num {
-      display: inline-block; width: 22px; height: 22px; line-height: 22px;
-      text-align: center; border-radius: 50%; background: #2563b0; color: white;
-      font-size: 0.72rem; font-weight: 700; margin-bottom: 6px;
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 34px; margin-bottom: 8px; position: relative;
+      background: #2563b0; color: white;
+      font-size: 0.75rem; font-weight: 700;
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      box-shadow: 0 2px 6px rgba(37,99,176,.45);
+    }
+    .advisor-card-num span {
+      transform: rotate(45deg);
+      line-height: 1;
     }
     .advisor-card-name { font-weight: 700; font-size: 0.92rem; margin-bottom: 4px; }
     .advisor-card-address { font-size: 0.8rem; color: #4a5568; margin-bottom: 8px; }
@@ -446,6 +454,7 @@
 
 </div>
 
+<script src="config.js"></script>
 <script>
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  LANGUAGE / TRANSLATIONS
@@ -1285,7 +1294,7 @@ document.getElementById('calcForm').addEventListener('submit', function(e) {
 // ─────────────────────────────────────────────────────────────────────────────
 //  ADVISOR SEARCH
 // ─────────────────────────────────────────────────────────────────────────────
-const GMAPS_KEY = 'AIzaSyB-6JRd6UOis-euxB7BfQ2z-aMPmA7GrY4';
+const GMAPS_KEY = window.GMAPS_KEY || '';
 let advisorMap = null;
 let advisorMarkers = [];
 let userLatLng = null;
@@ -1405,7 +1414,7 @@ function renderAdvisors(places) {
     const maps    = p.googleMapsUri
       ? `<a href=”${p.googleMapsUri}” target=”_blank” rel=”noopener” class=”advisor-link advisor-maps-link”>Maps</a>` : '';
     return `<div class=”advisor-card”>
-      <div class=”advisor-card-num”>${i + 1}</div>
+      <div class=”advisor-card-num”><span>${i + 1}</span></div>
       <div class=”advisor-card-name”>${name}</div>
       <div class=”advisor-card-address”>${address}</div>
       <div class=”advisor-card-meta”>${[rating, phone, website, maps].filter(Boolean).join('<span class=”advisor-sep”>&middot;</span>')}</div>
