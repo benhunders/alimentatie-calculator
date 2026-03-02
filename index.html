@@ -184,6 +184,69 @@
 
     .neg { color: #c53030; }
     .pos { color: #276749; }
+
+    /* ── Advisor search ── */
+    .advisor-search-bar {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;
+    }
+    .advisor-search-bar input {
+      flex: 1 1 180px; padding: 9px 12px; border: 1px solid #cbd5e0;
+      border-radius: 6px; font-size: 0.9rem;
+    }
+    .advisor-search-bar input:focus { outline: none; border-color: #2563b0; }
+    .btn-loc {
+      background: #edf2f7; color: #2d3748; border: 1px solid #cbd5e0;
+      padding: 9px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem;
+      white-space: nowrap;
+    }
+    .btn-loc:hover { background: #e2e8f0; }
+    .btn-search-med {
+      background: #2563b0; color: white; border: none;
+      padding: 9px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85rem;
+      font-weight: 600; white-space: nowrap;
+    }
+    .btn-search-med:hover { background: #1e4d8c; }
+    .btn-search-adv {
+      background: #276749; color: white; border: none;
+      padding: 9px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85rem;
+      font-weight: 600; white-space: nowrap;
+    }
+    .btn-search-adv:hover { background: #1a4731; }
+    .advisor-hint { font-size: 0.8rem; color: #718096; margin-bottom: 12px; }
+    .advisor-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px;
+      margin-bottom: 16px;
+    }
+    .advisor-card {
+      border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px;
+      background: #f7fafc;
+    }
+    .advisor-card-num {
+      display: inline-block; width: 22px; height: 22px; line-height: 22px;
+      text-align: center; border-radius: 50%; background: #2563b0; color: white;
+      font-size: 0.72rem; font-weight: 700; margin-bottom: 6px;
+    }
+    .advisor-card-name { font-weight: 700; font-size: 0.92rem; margin-bottom: 4px; }
+    .advisor-card-address { font-size: 0.8rem; color: #4a5568; margin-bottom: 8px; }
+    .advisor-card-meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .advisor-sep { color: #cbd5e0; font-size: 0.85rem; }
+    .advisor-rating { font-size: 0.8rem; color: #744210; background: #fefcbf;
+      border-radius: 4px; padding: 2px 6px; }
+    .advisor-link {
+      font-size: 0.8rem; color: #2563b0; text-decoration: none;
+      border: 1px solid #bee3f8; border-radius: 4px; padding: 2px 7px;
+    }
+    .advisor-link:hover { background: #ebf8ff; }
+    .advisor-maps-link { color: #276749; border-color: #c6f6d5; }
+    .advisor-maps-link:hover { background: #f0fff4; }
+    .advisor-msg { font-size: 0.88rem; color: #718096; padding: 12px 0; }
+    #advisorMap {
+      width: 100%; height: 340px; border-radius: 8px; margin-top: 4px;
+      display: none; border: 1px solid #e2e8f0;
+    }
+    @media (max-width: 480px) {
+      .btn-search-med, .btn-search-adv { flex: 1 1 auto; }
+    }
   </style>
 </head>
 <body>
@@ -365,6 +428,22 @@
     <div class="disclaimer" id="disclaimerBox"></div>
   </div>
 
+  <!-- Advisor search (always visible) -->
+  <div class="card" style="margin-top: 24px;">
+    <div class="card-header">&#128269; <span data-i18n="advisorTitle">Vind een mediator of advocaat</span></div>
+    <div class="card-body">
+      <p class="advisor-hint" data-i18n="advisorHint">Zoek gecertificeerde scheidingsmediators en familierecht advocaten bij u in de buurt.</p>
+      <div class="advisor-search-bar">
+        <input type="text" id="advisorLocation" data-i18n-ph="advisorPlaceholder" placeholder="Stad of postcode...">
+        <button class="btn-loc" id="locationBtn" onclick="useMyLocation()">&#128205; <span data-i18n="advisorLocBtn">Mijn locatie</span></button>
+        <button class="btn-search-med" onclick="searchAdvisors('mediator')" data-i18n="advisorMedBtn">Mediators</button>
+        <button class="btn-search-adv" onclick="searchAdvisors('advocaat')" data-i18n="advisorAdvBtn">Advocaten</button>
+      </div>
+      <div id="advisorResults"></div>
+      <div id="advisorMap"></div>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -484,6 +563,19 @@ const STRINGS = {
     netNote:    'Bruto alimentatie is het wettelijk overeengekomen bedrag. Voor de betaler is dit aftrekbaar van het belastbaar inkomen (belastingvoordeel). De ontvanger betaalt inkomstenbelasting en ZVW-bijdrage over het ontvangen bedrag. Het nettobedrag is het werkelijke effect op het besteedbaar inkomen.',
     // Disclaimer
     disclaimer: '<strong>Let op:</strong> Deze calculator geeft een indicatieve berekening op basis van Trema-richtlijnen (tarieven 1e helft 2026). De uitkomst kan afwijken van een offici\u00EBle berekening door een mediator of rechter. Raadpleeg altijd een familierechtsadvocaat of mediator voor een definitieve vaststelling.',
+    // Advisor search
+    advisorTitle:       'Vind een mediator of advocaat',
+    advisorHint:        'Zoek gecertificeerde scheidingsmediators en familierecht advocaten bij u in de buurt.',
+    advisorPlaceholder: 'Stad of postcode...',
+    advisorLocBtn:      'Mijn locatie',
+    advisorMedBtn:      'Mediators',
+    advisorAdvBtn:      'Advocaten',
+    advisorSearching:   'Zoeken\u2026',
+    advisorNone:        'Geen resultaten gevonden. Probeer een andere locatie.',
+    advisorError:       'Zoekopdracht mislukt. Controleer uw verbinding en probeer opnieuw.',
+    advisorLocating:    'Locatie bepalen\u2026',
+    advisorLocFail:     'Locatie kon niet worden bepaald.',
+    advisorLocLabel:    'Mijn locatie',
   },
 
   en: {
@@ -596,6 +688,19 @@ const STRINGS = {
     netNote:    'Gross alimony is the legally agreed amount. For the payer, this is deductible from taxable income (tax benefit). The recipient pays income tax and ZVW contribution on the received amount. The net amount is the actual effect on disposable income.',
     // Disclaimer
     disclaimer: '<strong>Note:</strong> This calculator provides an indicative calculation based on Trema guidelines (rates 1st half 2026). The result may differ from an official calculation by a mediator or court. Always consult a family law attorney or mediator for a definitive determination.',
+    // Advisor search
+    advisorTitle:       'Find a mediator or lawyer',
+    advisorHint:        'Search for certified divorce mediators and family law attorneys near you.',
+    advisorPlaceholder: 'City or postcode\u2026',
+    advisorLocBtn:      'My location',
+    advisorMedBtn:      'Mediators',
+    advisorAdvBtn:      'Lawyers',
+    advisorSearching:   'Searching\u2026',
+    advisorNone:        'No results found. Try a different location.',
+    advisorError:       'Search failed. Check your connection and try again.',
+    advisorLocating:    'Detecting location\u2026',
+    advisorLocFail:     'Could not determine location.',
+    advisorLocLabel:    'My location',
   },
 };
 
@@ -1176,6 +1281,172 @@ document.getElementById('calcForm').addEventListener('submit', function(e) {
   renderResults(lastResults);
   document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  ADVISOR SEARCH
+// ─────────────────────────────────────────────────────────────────────────────
+const GMAPS_KEY = 'AIzaSyB-6JRd6UOis-euxB7BfQ2z-aMPmA7GrY4';
+let advisorMap = null;
+let advisorMarkers = [];
+let userLatLng = null;
+let mapsApiLoading = false;
+let mapsApiReady = false;
+let mapsReadyCallbacks = [];
+
+function useMyLocation() {
+  if (!navigator.geolocation) {
+    alert(s('advisorLocFail'));
+    return;
+  }
+  const btn = document.getElementById('locationBtn');
+  const input = document.getElementById('advisorLocation');
+  btn.disabled = true;
+  btn.querySelector('[data-i18n]').textContent = s('advisorLocating');
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      userLatLng = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      input.value = s('advisorLocLabel');
+      btn.querySelector('[data-i18n]').textContent = s('advisorLocBtn');
+      btn.disabled = false;
+    },
+    () => {
+      userLatLng = null;
+      btn.querySelector('[data-i18n]').textContent = s('advisorLocBtn');
+      btn.disabled = false;
+      alert(s('advisorLocFail'));
+    }
+  );
+}
+
+function loadMapsApi(callback) {
+  if (mapsApiReady) { callback(); return; }
+  mapsReadyCallbacks.push(callback);
+  if (mapsApiLoading) return;
+  mapsApiLoading = true;
+  window._mapsApiReady = () => {
+    mapsApiReady = true;
+    mapsReadyCallbacks.forEach(fn => fn());
+    mapsReadyCallbacks = [];
+  };
+  const script = document.createElement('script');
+  script.src = `https://maps.googleapis.com/maps/api/js?key=${GMAPS_KEY}&callback=_mapsApiReady`;
+  script.async = true;
+  document.head.appendChild(script);
+}
+
+async function searchAdvisors(type) {
+  const locationInput = document.getElementById('advisorLocation').value.trim();
+  const resultsDiv = document.getElementById('advisorResults');
+  const mapDiv = document.getElementById('advisorMap');
+
+  const isMyLocation = userLatLng && locationInput === s('advisorLocLabel');
+  const queryTerm = type === 'mediator'
+    ? (currentLang === 'nl' ? 'scheidingsmediator' : 'divorce mediator')
+    : (currentLang === 'nl' ? 'familierecht advocaat scheiding' : 'family law attorney divorce');
+
+  const textQuery = (locationInput && !isMyLocation)
+    ? `${queryTerm} ${locationInput}`
+    : queryTerm;
+
+  resultsDiv.innerHTML = `<p class=”advisor-msg”>${s('advisorSearching')}</p>`;
+  mapDiv.style.display = 'none';
+
+  const body = {
+    textQuery,
+    languageCode: currentLang,
+    maxResultCount: 8,
+  };
+
+  if (isMyLocation) {
+    body.locationBias = {
+      circle: { center: { latitude: userLatLng.lat, longitude: userLatLng.lng }, radius: 50000 }
+    };
+  } else {
+    body.locationRestriction = {
+      rectangle: {
+        low:  { latitude: 50.75, longitude: 3.36 },
+        high: { latitude: 53.55, longitude: 7.23 }
+      }
+    };
+  }
+
+  try {
+    const resp = await fetch('https://places.googleapis.com/v1/places:searchText', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Goog-Api-Key': GMAPS_KEY,
+        'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.rating,places.userRatingCount,places.nationalPhoneNumber,places.websiteUri,places.googleMapsUri,places.location',
+      },
+      body: JSON.stringify(body),
+    });
+    const data = await resp.json();
+    renderAdvisors(data.places || []);
+  } catch {
+    resultsDiv.innerHTML = `<p class=”advisor-msg”>${s('advisorError')}</p>`;
+  }
+}
+
+function renderAdvisors(places) {
+  const resultsDiv = document.getElementById('advisorResults');
+  if (!places.length) {
+    resultsDiv.innerHTML = `<p class=”advisor-msg”>${s('advisorNone')}</p>`;
+    return;
+  }
+  resultsDiv.innerHTML = `<div class=”advisor-grid”>${places.map((p, i) => {
+    const name    = p.displayName?.text || '\u2014';
+    const address = p.formattedAddress || '';
+    const rating  = p.rating
+      ? `<span class=”advisor-rating”>\u2B50 ${p.rating.toFixed(1)} (${p.userRatingCount ?? 0})</span>` : '';
+    const phone   = p.nationalPhoneNumber
+      ? `<a href=”tel:${p.nationalPhoneNumber}” class=”advisor-link”>${p.nationalPhoneNumber}</a>` : '';
+    const website = p.websiteUri
+      ? `<a href=”${p.websiteUri}” target=”_blank” rel=”noopener” class=”advisor-link”>Website</a>` : '';
+    const maps    = p.googleMapsUri
+      ? `<a href=”${p.googleMapsUri}” target=”_blank” rel=”noopener” class=”advisor-link advisor-maps-link”>Maps</a>` : '';
+    return `<div class=”advisor-card”>
+      <div class=”advisor-card-num”>${i + 1}</div>
+      <div class=”advisor-card-name”>${name}</div>
+      <div class=”advisor-card-address”>${address}</div>
+      <div class=”advisor-card-meta”>${[rating, phone, website, maps].filter(Boolean).join('<span class=”advisor-sep”>&middot;</span>')}</div>
+    </div>`;
+  }).join('')}</div>`;
+
+  const withCoords = places.filter(p => p.location);
+  if (withCoords.length) loadMapsApi(() => renderMap(withCoords));
+}
+
+function renderMap(places) {
+  const mapDiv = document.getElementById('advisorMap');
+  mapDiv.style.display = 'block';
+
+  if (!advisorMap) {
+    advisorMap = new google.maps.Map(mapDiv, {
+      zoom: 11,
+      center: { lat: places[0].location.latitude, lng: places[0].location.longitude },
+      mapTypeControl: false,
+      streetViewControl: false,
+    });
+  } else {
+    advisorMarkers.forEach(m => m.setMap(null));
+    advisorMarkers = [];
+    advisorMap.setCenter({ lat: places[0].location.latitude, lng: places[0].location.longitude });
+    advisorMap.setZoom(11);
+  }
+
+  const bounds = new google.maps.LatLngBounds();
+  places.forEach((p, i) => {
+    const pos = { lat: p.location.latitude, lng: p.location.longitude };
+    const marker = new google.maps.Marker({
+      position: pos, map: advisorMap,
+      title: p.displayName?.text || '',
+      label: { text: String(i + 1), color: 'white', fontWeight: 'bold', fontSize: '12px' },
+    });
+    advisorMarkers.push(marker);
+    bounds.extend(pos);
+  });
+  advisorMap.fitBounds(bounds);
+}
 
 // â”€â”€ Initial language apply â”€â”€
 applyLang();
