@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
@@ -39,6 +39,23 @@
       transition: background .2s;
     }
     .lang-toggle:hover { background: rgba(255,255,255,.28); }
+
+    @media (max-width: 600px) {
+      header {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 16px;
+      }
+      .lang-toggle {
+        position: static;
+        transform: none;
+        align-self: flex-start;
+        order: -1;
+        padding: 5px 14px;
+        font-size: 0.8rem;
+      }
+    }
 
     .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
 
@@ -352,9 +369,9 @@
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  LANGUAGE / TRANSLATIONS
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 let currentLang = 'nl';
 
 const STRINGS = {
@@ -630,9 +647,9 @@ function toggleLang() {
   applyLang();
 }
 
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  CONSTANTS
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 const C = {
   S1_MAX: 38883, S1_RATE: 0.3575,
   S2_MAX: 78426, S2_RATE: 0.3756,
@@ -646,9 +663,9 @@ const C = {
   AOW_AGE:  67,
 };
 
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  TAX FUNCTIONS
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function box1Belasting(inkomen) {
   if (inkomen <= 0) return 0;
   let b = Math.min(inkomen, C.S1_MAX) * C.S1_RATE;
@@ -674,9 +691,9 @@ function marginaalTarief(belastbaarInkomen) {
   return C.S3_RATE;
 }
 
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  CORE INCOME CALCULATION
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function berekenInkomen(p, alimonyPaid = 0, alimonyReceived = 0) {
   const salaryAnnual   = p.salary  * 12;
   const vakantie       = salaryAnnual * C.VAKANTIE;
@@ -713,9 +730,9 @@ function berekenInkomen(p, alimonyPaid = 0, alimonyReceived = 0) {
   };
 }
 
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  DRAAGKRACHT
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function berekenDraagkracht(p) {
   const inc = berekenInkomen(p, 0, 0);
   const woonbudget        = C.WOON_PCT * inc.besteedbaarPM;
@@ -726,9 +743,9 @@ function berekenDraagkracht(p) {
   return { ...inc, woonbudget, draagkrachtloos, draagkrachtruimte, pct, beschikbaar };
 }
 
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  BRUTERING (Buijs)
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function brutering(netPerMonth, payerLaborIncome) {
   let grossPM = netPerMonth;
   for (let i = 0; i < 30; i++) {
@@ -740,9 +757,9 @@ function brutering(netPerMonth, payerLaborIncome) {
   return grossPM;
 }
 
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  BEHOEFTE
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function berekenBehoefte(payerInc, receiverInc, receiverP) {
   const combined    = payerInc.besteedbaarPM + receiverInc.besteedbaarPM;
   const behoefteNet = Math.max(0, 0.60 * combined - receiverInc.besteedbaarPM);
@@ -758,9 +775,9 @@ function berekenBehoefte(payerInc, receiverInc, receiverP) {
   return { behoefteNet, behoefteGross, combined };
 }
 
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  JUS (binary search)
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function berekenJUS(payerP, receiverP) {
   function netsAt(x) {
     const pc = berekenInkomen(payerP,    x, 0);
@@ -778,9 +795,9 @@ function berekenJUS(payerP, receiverP) {
   return (lo + hi) / 2 / 12;
 }
 
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  DURATION  (Art. 157 BW)
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function berekenDuur(marriageDate, filingDate, registrationDate, youngestChildDob, receiverDob) {
   function diffDays(d1, d2) { return Math.round((d2 - d1) / 86400000); }
   function diffYearsDays(d1, d2) {
@@ -848,11 +865,11 @@ function berekenDuur(marriageDate, filingDate, registrationDate, youngestChildDo
   };
 }
 
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  FORMATTING
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function eur(n) {
-  if (n === null || n === undefined || isNaN(n)) return '–';
+  if (n === null || n === undefined || isNaN(n)) return 'â€“';
   return (n < 0 ? '- ' : '') + '\u20AC\u202F' + Math.abs(n).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
 function pct(n) { return (n * 100).toFixed(2) + '%'; }
@@ -867,9 +884,9 @@ function fmtDuration(d) {
   return parts.join(s('durJoin'));
 }
 
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  BUILD DRAAGKRACHT TABLE
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function buildDraagkrachtTable(d) {
   function row(label, val, cls = '') {
     return `<tr class="${cls}"><td>${label}</td><td>${val}</td></tr>`;
@@ -884,7 +901,7 @@ function buildDraagkrachtTable(d) {
     ${row(s('rowBruto'),      eur(d.brutoInkomsten), 'subtotal')}
     ${sec(s('secPremies'))}
     ${row(s('rowPension'),    '- ' + eur(d.pensionAnnual))}
-    ${d.wiaAnnual > 0 ? row('53 – WIA', '- ' + eur(d.wiaAnnual)) : ''}
+    ${d.wiaAnnual > 0 ? row('53 â€“ WIA', '- ' + eur(d.wiaAnnual)) : ''}
     ${sec(s('secBelasting'))}
     ${row(s('rowBelastbaar'), eur(d.belastbaarInkomen))}
     ${row(s('rowRawTax'),     eur(d.rawBelasting))}
@@ -907,9 +924,9 @@ function buildDraagkrachtTable(d) {
   </table>`;
 }
 
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  RENDER RESULTS  (separated so language switch can re-render)
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 let lastResults = null;
 
 function renderResults(r) {
@@ -922,7 +939,7 @@ function renderResults(r) {
     payerTaxBenefit, payerNetCost, receiverNetGain, receiverTaxCost,
   } = r;
 
-  // ── Summary ──
+  // â”€â”€ Summary â”€â”€
   const summaryBox = document.getElementById('summaryBox');
   if (applied_pm <= 0) {
     summaryBox.innerHTML = `
@@ -950,7 +967,7 @@ function renderResults(r) {
       </div>`;
   }
 
-  // ── Draagkracht tables ──
+  // â”€â”€ Draagkracht tables â”€â”€
   const grid = document.getElementById('draagkrachtGrid');
   grid.innerHTML = `
     <div>
@@ -962,7 +979,7 @@ function renderResults(r) {
       ${buildDraagkrachtTable(dkReceiver)}
     </div>`;
 
-  // ── Comparison table ──
+  // â”€â”€ Comparison table â”€â”€
   const isMin = (() => {
     const min = Math.min(draagkrachtGrossPM, beh.behoefteGross, jus_pm);
     return (v) => Math.abs(v - min) < 0.01;
@@ -997,7 +1014,7 @@ function renderResults(r) {
       </tr>
     </tbody>`;
 
-  // ── Duration ──
+  // â”€â”€ Duration â”€â”€
   const marriageYrs = dur.marriageYrs;
   const rules = [
     {
@@ -1045,7 +1062,7 @@ function renderResults(r) {
       <div><strong>${s('verlengingsReq')}:</strong> ${fmtDate(dur.extensionDeadline)}</div>
     </div>`;
 
-  // ── Net income ──
+  // â”€â”€ Net income â”€â”€
   document.getElementById('netIncomeBox').innerHTML = `
     <div style="overflow-x:auto">
     <table class="compare-table">
@@ -1089,9 +1106,9 @@ function renderResults(r) {
   });
 }
 
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  FORM SUBMIT
-// ═══════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 document.getElementById('calcForm').addEventListener('submit', function(e) {
   e.preventDefault();
 
@@ -1161,7 +1178,7 @@ document.getElementById('calcForm').addEventListener('submit', function(e) {
   document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
 });
 
-// ── Initial language apply ──
+// â”€â”€ Initial language apply â”€â”€
 applyLang();
 </script>
 </body>
