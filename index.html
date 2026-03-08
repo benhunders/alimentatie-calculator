@@ -4,41 +4,65 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Partneralimentatie Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --navy:      #1A3356;
+      --navy-dark: #122540;
+      --navy-mid:  #254878;
+      --orange:    #E86A2E;
+      --orange-dk: #C9571E;
+      --bg:        #EEF1F5;
+      --card:      #FFFFFF;
+      --border:    #C8D0DC;
+      --text:      #1C2635;
+      --muted:     #6B7A90;
+      --stripe:    #F8FAFC;
+      --green:     #1E7A4A;
+      --green-bg:  #EBF7F0;
+      --green-bdr: #A8DCBE;
+    }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-      background: #f0f4f8;
-      color: #2d3748;
+      font-family: 'Lato', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15.5px;
+      line-height: 1.6;
       min-height: 100vh;
     }
 
     header {
-      background: #1e4d8c;
+      background: var(--navy);
       color: white;
-      padding: 24px 32px;
+      padding: 22px 32px;
       position: relative;
+      border-bottom: 3px solid var(--orange);
     }
-    header h1 { font-size: 1.6rem; font-weight: 700; }
-    header p  { font-size: 0.85rem; opacity: 0.8; margin-top: 4px; }
+    header h1 { font-size: 1.25rem; font-weight: 700; color: #fff; letter-spacing: 0.01em; line-height: 1.2; }
+    header p  { font-size: 0.76rem; color: #9FB4CC; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 3px; }
 
     .lang-toggle {
       position: absolute;
       top: 50%; right: 32px;
       transform: translateY(-50%);
-      background: rgba(255,255,255,.15);
-      color: white;
-      border: 1px solid rgba(255,255,255,.45);
-      padding: 7px 18px;
-      border-radius: 20px;
+      background: transparent;
+      color: rgba(255,255,255,0.85);
+      border: 1.5px solid rgba(255,255,255,0.3);
+      padding: 6px 14px;
+      border-radius: 5px;
       cursor: pointer;
-      font-size: 0.85rem;
-      font-weight: 600;
-      letter-spacing: .3px;
-      transition: background .2s;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      transition: border-color .2s, color .2s;
     }
-    .lang-toggle:hover { background: rgba(255,255,255,.28); }
+    .lang-toggle:hover { border-color: rgba(255,255,255,0.7); color: #fff; }
 
     @media (max-width: 600px) {
       header {
@@ -51,31 +75,36 @@
         position: static;
         transform: none;
         align-self: flex-end;
-        padding: 5px 14px;
-        font-size: 0.8rem;
+        padding: 5px 12px;
+        font-size: 0.75rem;
       }
     }
 
-    .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+    .container { max-width: 1080px; margin: 0 auto; padding: 36px 32px 64px; }
+    @media (max-width: 720px) { .container { padding: 24px 16px 48px; } }
 
     .card {
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+      background: var(--card);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--navy);
       margin-bottom: 20px;
       overflow: hidden;
     }
     .card-header {
-      background: #2563b0;
-      color: white;
-      padding: 12px 20px;
-      font-weight: 600;
-      font-size: 0.95rem;
+      background: var(--stripe);
+      color: var(--navy);
+      padding: 11px 20px;
+      font-weight: 700;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       gap: 8px;
     }
-    .card-body { padding: 20px; }
+    .card-body { padding: 22px 24px; }
 
     .partners-grid {
       display: grid;
@@ -85,176 +114,219 @@
     @media (max-width: 700px) { .partners-grid { grid-template-columns: 1fr; } }
 
     .field { margin-bottom: 14px; }
-    .field label { display: block; font-size: 0.82rem; font-weight: 600; color: #4a5568; margin-bottom: 4px; }
+    .field label {
+      display: block; font-size: 0.69rem; font-weight: 700;
+      color: var(--navy); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 5px;
+    }
     .field input, .field select {
       width: 100%;
-      padding: 8px 10px;
-      border: 1px solid #cbd5e0;
-      border-radius: 6px;
-      font-size: 0.9rem;
-      transition: border-color .2s;
+      padding: 9px 12px;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.92rem;
+      color: var(--text);
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      transition: border-color .18s, box-shadow .18s;
+      -webkit-appearance: none;
+      appearance: none;
     }
-    .field input:focus, .field select:focus { outline: none; border-color: #2563b0; }
-    .field .hint { font-size: 0.76rem; color: #718096; margin-top: 3px; }
+    .field input:focus, .field select:focus {
+      outline: none;
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px rgba(232,106,46,0.15);
+    }
+    .field input[type="number"]::-webkit-inner-spin-button,
+    .field input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    .field input[type="number"] { -moz-appearance: textfield; }
+    .field .hint { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
 
     .euro-wrap { position: relative; }
     .euro-wrap span {
-      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
-      color: #718096; font-size: 0.9rem; pointer-events: none;
+      position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+      color: var(--muted); font-size: 0.88rem; font-weight: 600; pointer-events: none;
     }
-    .euro-wrap input { padding-left: 22px; }
+    .euro-wrap input { padding-left: 26px; }
 
     .btn-primary {
-      background: #2563b0; color: white; border: none;
-      padding: 12px 32px; border-radius: 8px; font-size: 1rem;
-      font-weight: 600; cursor: pointer; transition: background .2s;
-      display: block; margin: 0 auto;
+      background: var(--orange);
+      color: #fff;
+      border: none;
+      padding: 14px 52px;
+      border-radius: 6px;
+      font-family: 'Lato', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(232,106,46,0.35);
+      transition: background .18s, box-shadow .18s;
+      display: block;
+      margin: 28px auto 8px;
     }
-    .btn-primary:hover { background: #1e4d8c; }
+    .btn-primary:hover { background: var(--orange-dk); box-shadow: 0 4px 14px rgba(232,106,46,0.45); }
 
     #results { display: none; }
 
     .result-section-title {
-      font-size: 1.1rem; font-weight: 700; color: #1e4d8c;
-      margin-bottom: 12px; padding-bottom: 6px; border-bottom: 2px solid #bee3f8;
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--navy); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid var(--border);
     }
 
-    .calc-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
-    .calc-table tr:nth-child(even) { background: #f7fafc; }
-    .calc-table td { padding: 6px 10px; }
-    .calc-table td:last-child { text-align: right; font-family: monospace; }
+    .calc-table { width: 100%; border-collapse: collapse; font-size: 0.855rem; }
+    .calc-table tr:nth-child(even) { background: var(--stripe); }
+    .calc-table td { padding: 8px 16px; border-bottom: 1px solid #EDF0F5; }
+    .calc-table td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
     .calc-table .section-header td {
-      background: #dbeafe; font-weight: 700; color: #1e3a5f; padding: 8px 10px;
+      background: var(--navy); color: #fff;
+      font-size: 0.66rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 7px 16px;
     }
-    .calc-table .subtotal td { font-weight: 600; border-top: 1px solid #bee3f8; }
+    .calc-table .subtotal td {
+      font-weight: 700; color: var(--navy);
+      background: #EEF3FA !important; border-top: 2px solid var(--navy-mid) !important;
+    }
     .calc-table .total-row td {
-      font-weight: 700; background: #ebf8ff; border-top: 2px solid #90cdf4;
-      font-size: 0.95rem;
+      font-weight: 700; color: var(--navy);
+      background: #EEF3FA !important; border-top: 2px solid var(--navy) !important; font-size: 0.9rem;
     }
 
-    .compare-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
     .compare-table th {
-      background: #2563b0; color: white; padding: 10px 14px;
-      text-align: left; font-weight: 600;
+      background: var(--navy); color: #fff; padding: 10px 16px;
+      text-align: left; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
     }
     .compare-table th:not(:first-child) { text-align: right; }
-    .compare-table td { padding: 9px 14px; border-bottom: 1px solid #e2e8f0; }
-    .compare-table td:not(:first-child) { text-align: right; font-family: monospace; }
-    .compare-table tr:hover { background: #f7fafc; }
-    .compare-table .highlight td { background: #1e4d8c; color: white; font-weight: 700; border-color: #1e4d8c; }
+    .compare-table td { padding: 10px 16px; border-bottom: 1px solid #EDF0F5; color: var(--text); }
+    .compare-table td:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }
+    .compare-table tr:hover { background: var(--stripe); }
+    .compare-table .highlight td {
+      background: #FFF5EF !important; font-weight: 700; color: var(--orange);
+      border-top: 2px solid var(--orange) !important;
+    }
 
     .summary-box {
-      background: linear-gradient(135deg, #1e4d8c, #2563b0);
-      color: white; border-radius: 10px; padding: 24px;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+      color: white; border-radius: 10px; padding: 32px 36px;
       text-align: center; margin-bottom: 20px;
+      position: relative; overflow: hidden;
     }
-    .summary-box .amount { font-size: 3rem; font-weight: 800; line-height: 1; }
-    .summary-box .label { font-size: 0.9rem; opacity: 0.85; margin-top: 4px; }
+    .summary-box::before {
+      content: ''; position: absolute; top: 0; right: 0;
+      width: 220px; height: 220px; background: rgba(255,255,255,0.03);
+      border-radius: 50%; transform: translate(60px, -80px);
+    }
+    .summary-box .amount { font-size: 2.8rem; font-weight: 700; line-height: 1; letter-spacing: -0.01em; }
+    .summary-box .label { font-size: 0.82rem; opacity: 0.7; margin-top: 4px; letter-spacing: 0.02em; }
     .summary-grid {
       display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px;
+      border-top: 1px solid rgba(255,255,255,.12); padding-top: 20px;
     }
     @media (max-width: 600px) { .summary-grid { grid-template-columns: 1fr; } }
-    .summary-item { background: rgba(255,255,255,.15); border-radius: 8px; padding: 14px; }
-    .summary-item .val { font-size: 1.4rem; font-weight: 700; }
-    .summary-item .lbl { font-size: 0.78rem; opacity: 0.85; margin-top: 3px; }
+    .summary-item { background: rgba(255,255,255,.1); border-radius: 6px; padding: 14px; }
+    .summary-item .val { font-size: 1.35rem; font-weight: 700; }
+    .summary-item .lbl { font-size: 0.68rem; opacity: 0.65; text-transform: uppercase; letter-spacing: 0.07em; margin-top: 3px; }
 
     .duration-box {
-      background: #f0fff4; border: 1px solid #9ae6b4; border-radius: 8px; padding: 16px 20px;
+      background: var(--green-bg); border: 1px solid var(--green-bdr); border-radius: 8px; padding: 16px 20px;
     }
-    .duration-box h4 { color: #276749; font-size: 0.95rem; margin-bottom: 8px; }
+    .duration-box h4 { color: var(--green); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; }
     .duration-rule {
-      display: flex; justify-content: space-between; padding: 6px 0;
-      border-bottom: 1px solid #c6f6d5; font-size: 0.85rem;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 0; border-bottom: 1px solid var(--green-bdr); font-size: 0.875rem;
     }
     .duration-rule:last-child { border-bottom: none; font-weight: 700; }
-    .duration-rule .applies { color: #276749; }
-    .duration-rule .na { color: #a0aec0; }
+    .duration-rule .applies { color: var(--green); font-weight: 700; }
+    .duration-rule .na { color: var(--muted); }
 
     .disclaimer {
-      background: #fffbeb; border: 1px solid #f6e05e; border-radius: 8px;
-      padding: 12px 16px; font-size: 0.82rem; color: #744210; margin-top: 20px;
+      background: #FFF8F0; border: 1px solid #F5C9A0;
+      border-radius: 6px; padding: 12px 16px; font-size: 0.76rem; color: #7A4A20; margin-top: 20px;
     }
 
     .badge {
-      display: inline-block; padding: 2px 8px; border-radius: 12px;
-      font-size: 0.75rem; font-weight: 600;
+      display: inline-block; padding: 2px 7px; border-radius: 3px;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
     }
-    .badge-blue  { background: #bee3f8; color: #1e3a5f; }
-    .badge-green { background: #c6f6d5; color: #1a4731; }
+    .badge-blue  { background: #D5E3F5; color: var(--navy); }
+    .badge-green { background: var(--green-bg); color: var(--green); }
 
-    .neg { color: #c53030; }
-    .pos { color: #276749; }
+    .neg { color: #B83025; }
+    .pos { color: var(--green); }
 
     /* ── Advisor search ── */
-    .advisor-search-bar {
-      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;
-    }
+    .advisor-search-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
     .advisor-search-bar input {
-      flex: 1 1 180px; padding: 9px 12px; border: 1px solid #cbd5e0;
-      border-radius: 6px; font-size: 0.9rem;
+      flex: 1 1 180px; padding: 9px 12px; border: 1px solid var(--border);
+      border-radius: 5px; font-family: 'Lato', sans-serif; font-size: 0.9rem; color: var(--text);
     }
-    .advisor-search-bar input:focus { outline: none; border-color: #2563b0; }
+    .advisor-search-bar input:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 3px rgba(232,106,46,0.15); }
     .btn-loc {
-      background: #edf2f7; color: #2d3748; border: 1px solid #cbd5e0;
-      padding: 9px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem;
-      white-space: nowrap;
+      background: var(--stripe); color: var(--text); border: 1px solid var(--border);
+      padding: 9px 14px; border-radius: 5px; cursor: pointer;
+      font-family: 'Lato', sans-serif; font-size: 0.85rem; white-space: nowrap;
     }
-    .btn-loc:hover { background: #e2e8f0; }
+    .btn-loc:hover { background: #E5EAF0; }
     .btn-search-med {
-      background: #2563b0; color: white; border: none;
-      padding: 9px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85rem;
-      font-weight: 600; white-space: nowrap;
+      background: var(--navy); color: white; border: none;
+      padding: 9px 16px; border-radius: 5px; cursor: pointer;
+      font-family: 'Lato', sans-serif; font-size: 0.85rem; font-weight: 700; white-space: nowrap;
     }
-    .btn-search-med:hover { background: #1e4d8c; }
+    .btn-search-med:hover { background: var(--navy-dark); }
     .btn-search-adv {
-      background: #276749; color: white; border: none;
-      padding: 9px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85rem;
-      font-weight: 600; white-space: nowrap;
+      background: var(--green); color: white; border: none;
+      padding: 9px 16px; border-radius: 5px; cursor: pointer;
+      font-family: 'Lato', sans-serif; font-size: 0.85rem; font-weight: 700; white-space: nowrap;
     }
-    .btn-search-adv:hover { background: #1a4731; }
-    .advisor-hint { font-size: 0.8rem; color: #718096; margin-bottom: 12px; }
+    .btn-search-adv:hover { background: #165A36; }
+    .advisor-hint { font-size: 0.82rem; color: var(--muted); margin-bottom: 12px; }
     .advisor-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px;
-      margin-bottom: 16px;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-bottom: 16px;
     }
     .advisor-card {
-      border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px;
-      background: #f7fafc;
+      border: 1px solid var(--border); border-left: 3px solid var(--navy);
+      border-radius: 6px; padding: 14px 16px; background: var(--stripe);
     }
     .advisor-card-num {
       display: inline-flex; align-items: center; justify-content: center;
       width: 28px; height: 34px; margin-bottom: 8px; position: relative;
-      background: #2563b0; color: white;
+      background: var(--navy); color: white;
       font-size: 0.75rem; font-weight: 700;
       border-radius: 50% 50% 50% 0;
       transform: rotate(-45deg);
-      box-shadow: 0 2px 6px rgba(37,99,176,.45);
+      box-shadow: 0 2px 6px rgba(26,51,86,0.35);
     }
-    .advisor-card-num span {
-      transform: rotate(45deg);
-      line-height: 1;
-    }
-    .advisor-card-name { font-weight: 700; font-size: 0.92rem; margin-bottom: 4px; }
-    .advisor-card-address { font-size: 0.8rem; color: #4a5568; margin-bottom: 8px; }
+    .advisor-card-num span { transform: rotate(45deg); line-height: 1; }
+    .advisor-card-name { font-weight: 700; font-size: 0.9rem; margin-bottom: 4px; color: var(--navy); }
+    .advisor-card-address { font-size: 0.78rem; color: var(--muted); margin-bottom: 8px; }
     .advisor-card-meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-    .advisor-sep { color: #cbd5e0; font-size: 0.85rem; }
-    .advisor-rating { font-size: 0.8rem; color: #744210; background: #fefcbf;
-      border-radius: 4px; padding: 2px 6px; }
+    .advisor-sep { color: var(--border); font-size: 0.85rem; }
+    .advisor-rating { font-size: 0.78rem; color: #7A5A10; background: #FFF4D6; border-radius: 3px; padding: 2px 6px; }
     .advisor-link {
-      font-size: 0.8rem; color: #2563b0; text-decoration: none;
-      border: 1px solid #bee3f8; border-radius: 4px; padding: 2px 7px;
+      font-size: 0.78rem; color: var(--navy); text-decoration: none;
+      border: 1px solid var(--border); border-radius: 3px; padding: 2px 7px;
     }
-    .advisor-link:hover { background: #ebf8ff; }
-    .advisor-maps-link { color: #276749; border-color: #c6f6d5; }
-    .advisor-maps-link:hover { background: #f0fff4; }
-    .advisor-msg { font-size: 0.88rem; color: #718096; padding: 12px 0; }
-    #advisorMap {
-      width: 100%; height: 340px; border-radius: 8px; margin-top: 4px;
-      display: none; border: 1px solid #e2e8f0;
+    .advisor-link:hover { background: var(--stripe); }
+    .advisor-maps-link { color: var(--green); border-color: var(--green-bdr); }
+    .advisor-maps-link:hover { background: var(--green-bg); }
+    .advisor-msg { font-size: 0.875rem; color: var(--muted); padding: 12px 0; }
+    #advisorMap { width: 100%; height: 340px; border-radius: 6px; margin-top: 4px; display: none; border: 1px solid var(--border); }
+    @media (max-width: 480px) { .btn-search-med, .btn-search-adv { flex: 1 1 auto; } }
+
+    /* ── Kinderalimentatie ── */
+    .kinder-box {
+      background: var(--green-bg); border: 1px solid var(--green-bdr);
+      border-left: 3px solid var(--green);
+      border-radius: 6px; padding: 16px 20px; margin-bottom: 12px;
     }
-    @media (max-width: 480px) {
-      .btn-search-med, .btn-search-adv { flex: 1 1 auto; }
+    .kinder-box h4 { color: var(--green); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; }
+    .kinder-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: 5px 0; border-bottom: 1px solid var(--green-bdr); font-size: 0.855rem;
     }
+    .kinder-row:last-child { border-bottom: none; font-weight: 700; }
+    .kinder-row span:last-child { font-variant-numeric: tabular-nums; }
+    .kinder-note { font-size: 0.75rem; color: var(--green); margin-top: 10px; font-style: italic; }
+    .kinder-warning { font-size: 0.75rem; color: #C05621; margin-top: 6px; }
   </style>
 </head>
 <body>
@@ -401,6 +473,59 @@
       </div>
     </div>
 
+    <!-- Kinderalimentatie -->
+    <div class="card">
+      <div class="card-header">&#128118; <span data-i18n="kinderSectionTitle">Kinderalimentatie (optioneel)</span></div>
+      <div class="card-body">
+        <div class="field">
+          <label data-i18n="includeKinder">Kinderalimentatie meenemen?</label>
+          <select id="includeKinder" onchange="toggleKinderFields()">
+            <option value="no" data-i18n="includeKinderNo">Nee – geen kinderen of al apart geregeld</option>
+            <option value="yes" data-i18n="includeKinderYes">Ja – berekenen</option>
+          </select>
+        </div>
+        <div id="kinderFields" style="display:none">
+          <div class="partners-grid">
+            <div>
+              <div class="field">
+                <label data-i18n="numKinderenLbl">Aantal kinderen</label>
+                <select id="numKinderen">
+                  <option value="1" data-i18n="num1kind">1 kind</option>
+                  <option value="2" data-i18n="num2kinderen">2 kinderen</option>
+                  <option value="3" data-i18n="num3kinderen">3 of meer kinderen</option>
+                </select>
+              </div>
+              <div class="field">
+                <label data-i18n="kinderVerblijfLbl">Hoofdverblijf kinderen</label>
+                <select id="kinderVerblijf">
+                  <option value="a" data-i18n="verblijfAtA">Bij Partner A (Partner B betaalt kinderalimentatie)</option>
+                  <option value="b" data-i18n="verblijfAtB">Bij Partner B (Partner A betaalt kinderalimentatie)</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <div class="field">
+                <label data-i18n="zorgregelingLbl">Zorgregeling niet-verzorgende ouder</label>
+                <select id="zorgregeling">
+                  <option value="0"    data-i18n="zorg0pct">Geen / minder dan 25% (0% zorgkorting)</option>
+                  <option value="0.15" data-i18n="zorg15pct">25–33% van de tijd (15% korting, cat. A)</option>
+                  <option value="0.25" data-i18n="zorg25pct">33–50% van de tijd (25% korting, cat. B)</option>
+                  <option value="0.35" data-i18n="zorg35pct">Gelijkwaardig ouderschap ≥50% (35% korting)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label data-i18n="kindgebondenLbl">Kindgebonden budget / maand (schatting)</label>
+                <div class="euro-wrap"><span>&euro;</span>
+                  <input type="number" id="kindgebonden" min="0" step="1" placeholder="0">
+                </div>
+                <div class="hint" data-i18n="kindgebondenHint">Ontvangen door verzorgende ouder van Belastingdienst. Laat 0 als onbekend.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <button type="submit" class="btn-primary" id="calcBtn">&#9654; Bereken partneralimentatie</button>
   </form>
 
@@ -408,6 +533,11 @@
   <div id="results">
     <div style="height:24px"></div>
     <div class="summary-box" id="summaryBox"></div>
+
+    <div class="card" id="kinderResultCard" style="display:none">
+      <div class="card-header" style="background:#276749;color:#fff;border-bottom-color:#1E6A3E;">&#128118; <span id="hdrKinder">Kinderalimentatie</span></div>
+      <div class="card-body" id="kinderResultBody"></div>
+    </div>
 
     <div class="card">
       <div class="card-header">&#128202; <span id="hdrDraagkracht">Draagkrachtberekening</span></div>
@@ -585,6 +715,39 @@ const STRINGS = {
     advisorLocating:    'Locatie bepalen\u2026',
     advisorLocFail:     'Locatie kon niet worden bepaald.',
     advisorLocLabel:    'Mijn locatie',
+    // Kinderalimentatie form
+    kinderSectionTitle: 'Kinderalimentatie (optioneel)',
+    includeKinder:      'Kinderalimentatie meenemen?',
+    includeKinderNo:    'Nee \u2013 geen kinderen of al apart geregeld',
+    includeKinderYes:   'Ja \u2013 berekenen',
+    numKinderenLbl:     'Aantal kinderen',
+    num1kind:           '1 kind',
+    num2kinderen:       '2 kinderen',
+    num3kinderen:       '3 of meer kinderen',
+    kinderVerblijfLbl:  'Hoofdverblijf kinderen',
+    verblijfAtA:        'Bij Partner A (Partner B betaalt kinderalimentatie)',
+    verblijfAtB:        'Bij Partner B (Partner A betaalt kinderalimentatie)',
+    zorgregelingLbl:    'Zorgregeling niet-verzorgende ouder',
+    zorg0pct:           'Geen / minder dan 25% (0% zorgkorting)',
+    zorg15pct:          '25\u201333% van de tijd (15% korting, cat. A)',
+    zorg25pct:          '33\u201350% van de tijd (25% korting, cat. B)',
+    zorg35pct:          'Gelijkwaardig ouderschap \u226550% (35% korting)',
+    kindgebondenLbl:    'Kindgebonden budget / maand (schatting)',
+    kindgebondenHint:   'Ontvangen door verzorgende ouder van Belastingdienst. Laat 0 als onbekend.',
+    // Kinderalimentatie results
+    hdrKinder:          'Kinderalimentatie',
+    kinderCombNBI:      'Gezamenlijk netto besteedbaar inkomen / maand',
+    kinderKosten:       'Kosten kind(eren) / maand (NIBUD-tabel)',
+    kinderKBaf:         'Af: kindgebonden budget',
+    kinderNetKosten:    'Netto kosten kind(eren)',
+    kinderPropShare:    (p, pc) => `Aandeel ${p} (niet-verzorgend, ${pc})`,
+    kinderZorgkortingLbl: (pc) => `Af: zorgkorting (${pc})`,
+    kinderBedrag:       'Kinderalimentatie per maand',
+    kinderDKmax:        'Draagkracht voor kinderen (max. 70% ruimte)',
+    kinderDKLimited:    'Begrensd door draagkracht \u2013 draagkracht is de bindende factor',
+    kinderAftrekPartner:(n) => `Kinderalimentatie afgetrokken van draagkrachtruimte ${n} voor partneralimentatie`,
+    kinderNibud:        'NIBUD-tabel bedragen zijn indicatief. Raadpleeg de offici\u00EBle NIBUD-tabel voor exacte bedragen.',
+    kinderPaysBetaalt:  (p, r, am) => `${p} betaalt ${r} ${am}/maand kinderalimentatie`,
   },
 
   en: {
@@ -710,6 +873,39 @@ const STRINGS = {
     advisorLocating:    'Detecting location\u2026',
     advisorLocFail:     'Could not determine location.',
     advisorLocLabel:    'My location',
+    // Kinderalimentatie form
+    kinderSectionTitle: 'Child Support (optional)',
+    includeKinder:      'Include child support calculation?',
+    includeKinderNo:    'No \u2013 no children or already arranged',
+    includeKinderYes:   'Yes \u2013 calculate',
+    numKinderenLbl:     'Number of children',
+    num1kind:           '1 child',
+    num2kinderen:       '2 children',
+    num3kinderen:       '3 or more children',
+    kinderVerblijfLbl:  'Primary residence of children',
+    verblijfAtA:        'With Partner A (Partner B pays child support)',
+    verblijfAtB:        'With Partner B (Partner A pays child support)',
+    zorgregelingLbl:    'Care arrangement (non-resident parent)',
+    zorg0pct:           'None / less than 25% of time (0% credit)',
+    zorg15pct:          '25\u201333% of time (15% credit, cat. A)',
+    zorg25pct:          '33\u201350% of time (25% credit, cat. B)',
+    zorg35pct:          'Equal parenting \u226550% (35% credit)',
+    kindgebondenLbl:    'Child benefit per month (estimated)',
+    kindgebondenHint:   'Amount received by resident parent from Tax Authority. Leave 0 if unknown.',
+    // Kinderalimentatie results
+    hdrKinder:          'Child Support',
+    kinderCombNBI:      'Combined net disposable income / month',
+    kinderKosten:       'Child costs / month (NIBUD table)',
+    kinderKBaf:         'Less: child benefit',
+    kinderNetKosten:    'Net child costs',
+    kinderPropShare:    (p, pc) => `Share of ${p} (non-resident, ${pc})`,
+    kinderZorgkortingLbl: (pc) => `Less: care credit (${pc})`,
+    kinderBedrag:       'Child support per month',
+    kinderDKmax:        'Capacity for children (max. 70% margin)',
+    kinderDKLimited:    'Limited by capacity \u2013 capacity is the binding factor',
+    kinderAftrekPartner:(n) => `Child support deducted from ${n}\u2019s capacity for partner alimony`,
+    kinderNibud:        'NIBUD table amounts are indicative. Consult the official NIBUD table for exact figures.',
+    kinderPaysBetaalt:  (p, r, am) => `${p} pays ${r} ${am}/month child support`,
   },
 };
 
@@ -856,6 +1052,96 @@ function berekenDraagkracht(p) {
   return { ...inc, woonbudget, draagkrachtloos, draagkrachtruimte, pct, beschikbaar };
 }
 
+// ═══════════════════════════════════════════════════════
+//  NIBUD TABEL (indicatief, 2026)
+//  [gezamenlijk NBI/maand, 1 kind, 2 kinderen, 3+ kinderen]
+//  Bron: Expertgroep Alimentatienormen (LOVF), indicatieve waarden
+// ═══════════════════════════════════════════════════════
+const NIBUD_TABLE = [
+  [ 1500,  390,  685,  890],
+  [ 1750,  462,  812, 1055],
+  [ 2000,  534,  939, 1220],
+  [ 2250,  604, 1063, 1381],
+  [ 2500,  673, 1185, 1539],
+  [ 2750,  741, 1305, 1695],
+  [ 3000,  807, 1421, 1847],
+  [ 3250,  873, 1535, 1995],
+  [ 3500,  936, 1646, 2139],
+  [ 3750,  998, 1755, 2281],
+  [ 4000, 1059, 1861, 2419],
+  [ 4500, 1174, 2066, 2685],
+  [ 5000, 1284, 2261, 2939],
+  [ 5500, 1389, 2449, 3183],
+  [ 6000, 1488, 2627, 3415],
+  [ 6500, 1582, 2798, 3638],
+  [ 7000, 1671, 2961, 3850],
+  [ 7500, 1755, 3116, 4052],
+  [ 8000, 1835, 3264, 4245],
+  [ 9000, 1984, 3542, 4609],
+  [10000, 2122, 3801, 4944],
+  [11000, 2251, 4042, 5255],
+  [12000, 2371, 4268, 5546],
+];
+
+function nibudLookup(combinedNBI, numKinderen) {
+  const col = numKinderen >= 3 ? 3 : numKinderen >= 2 ? 2 : 1;
+  if (combinedNBI <= NIBUD_TABLE[0][0]) return NIBUD_TABLE[0][col];
+  if (combinedNBI >= NIBUD_TABLE[NIBUD_TABLE.length - 1][0]) return NIBUD_TABLE[NIBUD_TABLE.length - 1][col];
+  for (let i = 0; i < NIBUD_TABLE.length - 1; i++) {
+    if (combinedNBI >= NIBUD_TABLE[i][0] && combinedNBI < NIBUD_TABLE[i + 1][0]) {
+      const t = (combinedNBI - NIBUD_TABLE[i][0]) / (NIBUD_TABLE[i + 1][0] - NIBUD_TABLE[i][0]);
+      return NIBUD_TABLE[i][col] + t * (NIBUD_TABLE[i + 1][col] - NIBUD_TABLE[i][col]);
+    }
+  }
+  return NIBUD_TABLE[NIBUD_TABLE.length - 1][col];
+}
+
+// ═══════════════════════════════════════════════════════
+//  KINDERALIMENTATIE
+// ═══════════════════════════════════════════════════════
+function berekenKinderalimentatie(kinderPayerP, kinderReceiverP, numKinderen, zorgkortingPct, kindgebondenPM) {
+  const nbiPayer    = berekenInkomen(kinderPayerP,    0, 0).besteedbaarPM;
+  const nbiReceiver = berekenInkomen(kinderReceiverP, 0, 0).besteedbaarPM;
+  const combinedNBI = nbiPayer + nbiReceiver;
+
+  // Gross child costs from NIBUD table
+  const childCostsPM = nibudLookup(combinedNBI, numKinderen);
+
+  // Kindgebonden budget reduces net child costs (capped at total costs)
+  const kindgebondenCapped = Math.min(kindgebondenPM, childCostsPM);
+  const netChildCostsPM    = Math.max(0, childCostsPM - kindgebondenCapped);
+
+  // Proportional share of net costs based on NBI
+  const payerSharePM = combinedNBI > 0 ? netChildCostsPM * (nbiPayer / combinedNBI) : 0;
+
+  // Zorgkorting based on GROSS costs (covers payer's share of housing during their time)
+  const zorgkortingPM = childCostsPM * zorgkortingPct;
+
+  // Raw kinderalimentatie
+  const kinderalimentatieRaw = Math.max(0, payerSharePM - zorgkortingPM);
+
+  // Draagkracht check for children: 70% of draagkrachtruimte (Art. 1:400 BW priority)
+  const incPayer = berekenInkomen(kinderPayerP, 0, 0);
+  const woonbudget = C.WOON_PCT * incPayer.besteedbaarPM;
+  const draagkrachtloos = C.FORFAIT + woonbudget;
+  const draagkrachtruimte = Math.max(0, incPayer.besteedbaarPM - draagkrachtloos);
+  const draagkrachtKinderenPM = draagkrachtruimte * 0.70;
+
+  const kinderalimentatiePM = Math.min(kinderalimentatieRaw, draagkrachtKinderenPM);
+  const isDKLimited = kinderalimentatieRaw > draagkrachtKinderenPM;
+
+  return {
+    combinedNBI, childCostsPM, kindgebondenCapped, netChildCostsPM,
+    nbiPayer, nbiReceiver, payerSharePM, zorgkortingPM,
+    kinderalimentatieRaw, draagkrachtKinderenPM, kinderalimentatiePM, isDKLimited,
+  };
+}
+
+function toggleKinderFields() {
+  const show = document.getElementById('includeKinder').value === 'yes';
+  document.getElementById('kinderFields').style.display = show ? '' : 'none';
+}
+
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  BRUTERING (Buijs)
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -873,9 +1159,10 @@ function brutering(netPerMonth, payerLaborIncome) {
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  BEHOEFTE
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-function berekenBehoefte(payerInc, receiverInc, receiverP) {
+function berekenBehoefte(payerInc, receiverInc, receiverP, childCostsPM = 0) {
   const combined    = payerInc.besteedbaarPM + receiverInc.besteedbaarPM;
-  const behoefteNet = Math.max(0, 0.60 * combined - receiverInc.besteedbaarPM);
+  // Kinderkosten worden afgetrokken van het gezamenlijk inkomen voor de 60%-norm (Hof-formule)
+  const behoefteNet = Math.max(0, 0.60 * (combined - childCostsPM) - receiverInc.besteedbaarPM);
   let behoefteGross = behoefteNet / (1 - C.S3_RATE);
   for (let i = 0; i < 30; i++) {
     const proj = receiverP.salary * 12 - receiverP.pension * 12 - receiverP.wia * 12
@@ -891,11 +1178,14 @@ function berekenBehoefte(payerInc, receiverInc, receiverP) {
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  JUS (binary search)
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-function berekenJUS(payerP, receiverP) {
-  function netsAt(x) {
+function berekenJUS(payerP, receiverP, kinderalimentatiePM = 0, kinderPayerIsMainPayer = true) {
+  function netsAt(x) { // x = annual partner alimony
     const pc = berekenInkomen(payerP,    x, 0);
     const rc = berekenInkomen(receiverP, 0, x);
-    return { payer: pc.besteedbaarPM - x / 12, receiver: rc.besteedbaarPM };
+    // Kinderalimentatie reduces the kinder-payer's disposable income
+    const payerNet    = pc.besteedbaarPM - x / 12 - (kinderPayerIsMainPayer  ? kinderalimentatiePM : 0);
+    const receiverNet = rc.besteedbaarPM           - (!kinderPayerIsMainPayer ? kinderalimentatiePM : 0);
+    return { payer: payerNet, receiver: receiverNet };
   }
   const { payer: p0, receiver: r0 } = netsAt(0);
   if (p0 <= r0) return 0;
@@ -1046,6 +1336,7 @@ function renderResults(r) {
   const {
     payer, receiver, dkPayer, dkReceiver,
     draagkrachtGrossPM, beh, jus_pm, applied_pm, applied_yr,
+    kinderResult, beschikbaarPartner,
     dur, registrationDate,
     payerAfter, receiverAfter,
     payerResteert, receiverResteert,
@@ -1080,11 +1371,43 @@ function renderResults(r) {
       </div>`;
   }
 
+  // ── Kinderalimentatie result card ──
+  const kinderCard = document.getElementById('kinderResultCard');
+  const kinderBody = document.getElementById('kinderResultBody');
+  const hdrKinderEl = document.getElementById('hdrKinder');
+  if (hdrKinderEl) hdrKinderEl.textContent = s('hdrKinder');
+
+  if (kinderResult) {
+    kinderCard.style.display = '';
+    const kr = kinderResult;
+    const nbiPct = kr.combinedNBI > 0 ? pct(kr.nbiPayer / kr.combinedNBI) : '&mdash;';
+    const showKB = kr.kindgebondenCapped > 0;
+    const zorgVal = parseFloat(document.getElementById('zorgregeling') ? document.getElementById('zorgregeling').value : 0) || 0;
+
+    kinderBody.innerHTML = `
+      <div class=”kinder-box”>
+        <h4>${s('kinderPaysBetaalt', kr.kinderPayerName, kr.kinderReceiverName, eur(kr.kinderalimentatiePM))}</h4>
+        <div class=”kinder-row”><span>${s('kinderCombNBI')}</span><span>${eur(kr.combinedNBI)}</span></div>
+        <div class=”kinder-row”><span>${s('kinderKosten')}</span><span>${eur(kr.childCostsPM)}</span></div>
+        ${showKB ? `<div class=”kinder-row”><span>${s('kinderKBaf')}</span><span>&minus; ${eur(kr.kindgebondenCapped)}</span></div>
+        <div class=”kinder-row”><span>${s('kinderNetKosten')}</span><span>${eur(kr.netChildCostsPM)}</span></div>` : ''}
+        <div class=”kinder-row”><span>${s('kinderPropShare', kr.kinderPayerName, nbiPct)}</span><span>${eur(kr.payerSharePM)}</span></div>
+        ${kr.zorgkortingPM > 0 ? `<div class=”kinder-row”><span>${s('kinderZorgkortingLbl', pct(zorgVal))}</span><span>&minus; ${eur(kr.zorgkortingPM)}</span></div>` : ''}
+        <div class=”kinder-row”><span><strong>${s('kinderBedrag')}</strong></span><span><strong>${eur(kr.kinderalimentatiePM)}</strong></span></div>
+        <div class=”kinder-row” style=”font-size:.8rem;color:#718096”><span>${s('kinderDKmax')}</span><span>${eur(kr.draagkrachtKinderenPM)}</span></div>
+        ${kr.isDKLimited ? `<p class=”kinder-warning”>&#9888; ${s('kinderDKLimited')}</p>` : ''}
+      </div>
+      ${kr.kinderPayerIsMainPayer && kr.kinderalimentatiePM > 0 ? `<p class=”kinder-note”>&#8594; ${s('kinderAftrekPartner', kr.kinderPayerName)}</p>` : ''}
+      <p class=”kinder-note”>&#8505; ${s('kinderNibud')}</p>`;
+  } else {
+    kinderCard.style.display = 'none';
+  }
+
   // â”€â”€ Draagkracht tables â”€â”€
   const grid = document.getElementById('draagkrachtGrid');
   grid.innerHTML = `
     <div>
-      <div class="result-section-title">${payer.name}</div>
+      <div class=”result-section-title”>${payer.name}</div>
       ${buildDraagkrachtTable(dkPayer)}
     </div>
     <div>
@@ -1213,9 +1536,9 @@ function renderResults(r) {
   document.getElementById('disclaimerBox').innerHTML = s('disclaimer');
 
   // Result card headers
-  ['hdrDraagkracht','hdrVergelijking','hdrDuur','hdrBesteedbaar'].forEach(id => {
+  ['hdrDraagkracht','hdrVergelijking','hdrDuur','hdrBesteedbaar','hdrKinder'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.textContent = s(id);
+    if (el && s(id) !== id) el.textContent = s(id);
   });
 }
 
@@ -1260,9 +1583,34 @@ document.getElementById('calcForm').addEventListener('submit', function(e) {
   else if (A.salary >= B.salary)    { payer = A; receiver = B; dkPayer = dkA; dkReceiver = dkB; }
   else                              { payer = B; receiver = A; dkPayer = dkB; dkReceiver = dkA; }
 
-  const draagkrachtGrossPM = brutering(dkPayer.beschikbaar, dkPayer.inkomenUitArbeid);
-  const beh     = berekenBehoefte(dkPayer, dkReceiver, receiver);
-  const jus_pm  = berekenJUS(payer, receiver);
+  // ── Kinderalimentatie (Art. 1:400 BW – berekend vóór partneralimentatie) ──
+  let kinderResult = null;
+  if (document.getElementById('includeKinder').value === 'yes') {
+    const numKind       = parseInt(document.getElementById('numKinderen').value);
+    const verblijf      = document.getElementById('kinderVerblijf').value;
+    const zorgPct       = parseFloat(document.getElementById('zorgregeling').value);
+    const kindgebonden  = val('kindgebonden');
+
+    // Non-resident parent pays kinderalimentatie
+    const kinderPayerP    = verblijf === 'a' ? B : A;
+    const kinderReceiverP = verblijf === 'a' ? A : B;
+
+    kinderResult = berekenKinderalimentatie(kinderPayerP, kinderReceiverP, numKind, zorgPct, kindgebonden);
+    kinderResult.kinderPayerName    = kinderPayerP.name;
+    kinderResult.kinderReceiverName = kinderReceiverP.name;
+    kinderResult.kinderPayerIsMainPayer = (kinderPayerP === payer);
+  }
+
+  // Kinderalimentatie reduces payer's beschikbaar voor partneralimentatie (zelfde betaler)
+  const kinderPM = kinderResult ? kinderResult.kinderalimentatiePM : 0;
+  const kinderIsMainPayer = kinderResult ? kinderResult.kinderPayerIsMainPayer : true;
+  const beschikbaarPartner = kinderIsMainPayer
+    ? Math.max(0, dkPayer.beschikbaar - kinderPM)
+    : dkPayer.beschikbaar;
+
+  const draagkrachtGrossPM = brutering(beschikbaarPartner, dkPayer.inkomenUitArbeid);
+  const beh     = berekenBehoefte(dkPayer, dkReceiver, receiver, kinderResult ? kinderResult.childCostsPM : 0);
+  const jus_pm  = berekenJUS(payer, receiver, kinderPM, kinderIsMainPayer);
   const applied_pm = Math.max(0, Math.min(draagkrachtGrossPM, beh.behoefteGross, jus_pm));
   const applied_yr = applied_pm * 12;
 
@@ -1280,6 +1628,7 @@ document.getElementById('calcForm').addEventListener('submit', function(e) {
   lastResults = {
     payer, receiver, dkPayer, dkReceiver,
     draagkrachtGrossPM, beh, jus_pm, applied_pm, applied_yr,
+    kinderResult, beschikbaarPartner,
     dur, registrationDate, youngestChildDob,
     payerAfter, receiverAfter,
     payerResteert, receiverResteert,
