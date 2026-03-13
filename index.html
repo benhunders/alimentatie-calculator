@@ -1687,7 +1687,7 @@ function loadMapsApi(callback) {
     mapsReadyCallbacks = [];
   };
   const script = document.createElement('script');
-  script.src = `https://maps.googleapis.com/maps/api/js?key=${GMAPS_KEY}&callback=_mapsApiReady`;
+  script.src = `https://maps.googleapis.com/maps/api/js?key=${GMAPS_KEY}&libraries=marker&loading=async&callback=_mapsApiReady`;
   script.async = true;
   document.head.appendChild(script);
 }
@@ -1784,6 +1784,7 @@ function renderMap(places) {
       center: { lat: places[0].location.latitude, lng: places[0].location.longitude },
       mapTypeControl: false,
       streetViewControl: false,
+      mapId: 'DEMO_MAP_ID',
     });
   } else {
     advisorMarkers.forEach(m => m.setMap(null));
@@ -1795,10 +1796,17 @@ function renderMap(places) {
   const bounds = new google.maps.LatLngBounds();
   places.forEach((p, i) => {
     const pos = { lat: p.location.latitude, lng: p.location.longitude };
-    const marker = new google.maps.Marker({
-      position: pos, map: advisorMap,
+    const pin = new google.maps.marker.PinElement({
+      glyph: String(i + 1),
+      glyphColor: 'white',
+      background: '#EA4335',
+      borderColor: '#C5221F',
+    });
+    const marker = new google.maps.marker.AdvancedMarkerElement({
+      position: pos,
+      map: advisorMap,
       title: p.displayName?.text || '',
-      label: { text: String(i + 1), color: 'white', fontWeight: 'bold', fontSize: '12px' },
+      content: pin.element,
     });
     advisorMarkers.push(marker);
     bounds.extend(pos);
