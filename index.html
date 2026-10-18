@@ -1385,20 +1385,20 @@ function renderResults(r) {
     const zorgVal = parseFloat(document.getElementById('zorgregeling') ? document.getElementById('zorgregeling').value : 0) || 0;
 
     kinderBody.innerHTML = `
-      <div class=”kinder-box”>
+      <div class="kinder-box">
         <h4>${s('kinderPaysBetaalt', kr.kinderPayerName, kr.kinderReceiverName, eur(kr.kinderalimentatiePM))}</h4>
-        <div class=”kinder-row”><span>${s('kinderCombNBI')}</span><span>${eur(kr.combinedNBI)}</span></div>
-        <div class=”kinder-row”><span>${s('kinderKosten')}</span><span>${eur(kr.childCostsPM)}</span></div>
-        ${showKB ? `<div class=”kinder-row”><span>${s('kinderKBaf')}</span><span>&minus; ${eur(kr.kindgebondenCapped)}</span></div>
-        <div class=”kinder-row”><span>${s('kinderNetKosten')}</span><span>${eur(kr.netChildCostsPM)}</span></div>` : ''}
-        <div class=”kinder-row”><span>${s('kinderPropShare', kr.kinderPayerName, nbiPct)}</span><span>${eur(kr.payerSharePM)}</span></div>
-        ${kr.zorgkortingPM > 0 ? `<div class=”kinder-row”><span>${s('kinderZorgkortingLbl', pct(zorgVal))}</span><span>&minus; ${eur(kr.zorgkortingPM)}</span></div>` : ''}
-        <div class=”kinder-row”><span><strong>${s('kinderBedrag')}</strong></span><span><strong>${eur(kr.kinderalimentatiePM)}</strong></span></div>
-        <div class=”kinder-row” style=”font-size:.8rem;color:#718096”><span>${s('kinderDKmax')}</span><span>${eur(kr.draagkrachtKinderenPM)}</span></div>
-        ${kr.isDKLimited ? `<p class=”kinder-warning”>&#9888; ${s('kinderDKLimited')}</p>` : ''}
+        <div class="kinder-row"><span>${s('kinderCombNBI')}</span><span>${eur(kr.combinedNBI)}</span></div>
+        <div class="kinder-row"><span>${s('kinderKosten')}</span><span>${eur(kr.childCostsPM)}</span></div>
+        ${showKB ? `<div class="kinder-row"><span>${s('kinderKBaf')}</span><span>&minus; ${eur(kr.kindgebondenCapped)}</span></div>
+        <div class="kinder-row"><span>${s('kinderNetKosten')}</span><span>${eur(kr.netChildCostsPM)}</span></div>` : ''}
+        <div class="kinder-row"><span>${s('kinderPropShare', kr.kinderPayerName, nbiPct)}</span><span>${eur(kr.payerSharePM)}</span></div>
+        ${kr.zorgkortingPM > 0 ? `<div class="kinder-row"><span>${s('kinderZorgkortingLbl', pct(zorgVal))}</span><span>&minus; ${eur(kr.zorgkortingPM)}</span></div>` : ''}
+        <div class="kinder-row"><span><strong>${s('kinderBedrag')}</strong></span><span><strong>${eur(kr.kinderalimentatiePM)}</strong></span></div>
+        <div class="kinder-row" style="font-size:.8rem;color:#718096"><span>${s('kinderDKmax')}</span><span>${eur(kr.draagkrachtKinderenPM)}</span></div>
+        ${kr.isDKLimited ? `<p class="kinder-warning">&#9888; ${s('kinderDKLimited')}</p>` : ''}
       </div>
-      ${kr.kinderPayerIsMainPayer && kr.kinderalimentatiePM > 0 ? `<p class=”kinder-note”>&#8594; ${s('kinderAftrekPartner', kr.kinderPayerName)}</p>` : ''}
-      <p class=”kinder-note”>&#8505; ${s('kinderNibud')}</p>`;
+      ${kr.kinderPayerIsMainPayer && kr.kinderalimentatiePM > 0 ? `<p class="kinder-note">&#8594; ${s('kinderAftrekPartner', kr.kinderPayerName)}</p>` : ''}
+      <p class="kinder-note">&#8505; ${s('kinderNibud')}</p>`;
   } else {
     kinderCard.style.display = 'none';
   }
@@ -1407,7 +1407,7 @@ function renderResults(r) {
   const grid = document.getElementById('draagkrachtGrid');
   grid.innerHTML = `
     <div>
-      <div class=”result-section-title”>${payer.name}</div>
+      <div class="result-section-title">${payer.name}</div>
       ${buildDraagkrachtTable(dkPayer)}
     </div>
     <div>
@@ -1706,7 +1706,7 @@ async function searchAdvisors(type) {
     ? `${queryTerm} ${locationInput}`
     : queryTerm;
 
-  resultsDiv.innerHTML = `<p class=”advisor-msg”>${s('advisorSearching')}</p>`;
+  resultsDiv.innerHTML = `<p class="advisor-msg">${s('advisorSearching')}</p>`;
   mapDiv.style.display = 'none';
 
   const body = {
@@ -1741,32 +1741,32 @@ async function searchAdvisors(type) {
     const data = await resp.json();
     renderAdvisors(data.places || []);
   } catch {
-    resultsDiv.innerHTML = `<p class=”advisor-msg”>${s('advisorError')}</p>`;
+    resultsDiv.innerHTML = `<p class="advisor-msg">${s('advisorError')}</p>`;
   }
 }
 
 function renderAdvisors(places) {
   const resultsDiv = document.getElementById('advisorResults');
   if (!places.length) {
-    resultsDiv.innerHTML = `<p class=”advisor-msg”>${s('advisorNone')}</p>`;
+    resultsDiv.innerHTML = `<p class="advisor-msg">${s('advisorNone')}</p>`;
     return;
   }
-  resultsDiv.innerHTML = `<div class=”advisor-grid”>${places.map((p, i) => {
+  resultsDiv.innerHTML = `<div class="advisor-grid">${places.map((p, i) => {
     const name    = p.displayName?.text || '\u2014';
     const address = p.formattedAddress || '';
     const rating  = p.rating
-      ? `<span class=”advisor-rating”>\u2B50 ${p.rating.toFixed(1)} (${p.userRatingCount ?? 0})</span>` : '';
+      ? `<span class="advisor-rating">\u2B50 ${p.rating.toFixed(1)} (${p.userRatingCount ?? 0})</span>` : '';
     const phone   = p.nationalPhoneNumber
-      ? `<a href=”tel:${p.nationalPhoneNumber}” class=”advisor-link”>${p.nationalPhoneNumber}</a>` : '';
+      ? `<a href="tel:${p.nationalPhoneNumber}" class="advisor-link">${p.nationalPhoneNumber}</a>` : '';
     const website = p.websiteUri
-      ? `<a href=”${p.websiteUri}” target=”_blank” rel=”noopener” class=”advisor-link”>Website</a>` : '';
+      ? `<a href="${p.websiteUri}" target="_blank" rel="noopener" class="advisor-link">Website</a>` : '';
     const maps    = p.googleMapsUri
-      ? `<a href=”${p.googleMapsUri}” target=”_blank” rel=”noopener” class=”advisor-link advisor-maps-link”>Maps</a>` : '';
-    return `<div class=”advisor-card”>
-      <div class=”advisor-card-num”><span>${i + 1}</span></div>
-      <div class=”advisor-card-name”>${name}</div>
-      <div class=”advisor-card-address”>${address}</div>
-      <div class=”advisor-card-meta”>${[rating, phone, website, maps].filter(Boolean).join('<span class=”advisor-sep”>&middot;</span>')}</div>
+      ? `<a href="${p.googleMapsUri}" target="_blank" rel="noopener" class="advisor-link advisor-maps-link">Maps</a>` : '';
+    return `<div class="advisor-card">
+      <div class="advisor-card-num"><span>${i + 1}</span></div>
+      <div class="advisor-card-name">${name}</div>
+      <div class="advisor-card-address">${address}</div>
+      <div class="advisor-card-meta">${[rating, phone, website, maps].filter(Boolean).join('<span class="advisor-sep">&middot;</span>')}</div>
     </div>`;
   }).join('')}</div>`;
 
